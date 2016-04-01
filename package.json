@@ -1,0 +1,28 @@
+{
+  "name": "kindlelight",
+  "version": "0.0.1",
+  "description": "a lightnovel site for kindel",
+  "main": "main.js",
+  "dependencies": {
+    "express": "^4.13.4"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "lightnovel",
+    "kindle",
+    "node.js"
+  ],
+  "author": "Rozx",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rozx/kindlelight.git"
+  },
+  "bugs": {
+    "url": "https://github.com/rozx/kindlelight/issues"
+  },
+  "homepage": "https://github.com/rozx/kindlelight#readme"
+}
