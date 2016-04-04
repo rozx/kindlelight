@@ -4,20 +4,26 @@ console.log("> initializing...");
 
 var express = require('express');
 var app = express();
-var port = 80;
+var port = 8080;
+var jar;
 
 // init file system
 var fs = require('fs');
 
+// init encoding 
+
+var gbk = require('gbk');
+
 // init request 
-//var rq = require('request');
+
 var rq = require('request').defaults({jar: true});
 
 // init cheerio
 
 var cheerio = require('cheerio');
 
-
+// init wenku8 module
+var wenku = require('./wenku.js');
 
 console.log("> initialized.");
 
@@ -38,8 +44,8 @@ try{
 
 // logging in
 
-login('rozx','1990710');
-
+wenku.login('rozx','1990710');
+console.log('> logging to: ' + wenku.url);
 
 // app config
 
@@ -58,7 +64,23 @@ app.get('/', function (req, res) {
 app.param('id',function(req,res,next,id){
 
 	console.log('> Getting book id:' + id);
-	next();
+		
+
+	if(wenku.loggedIn){
+		
+		if(!jar){
+
+			jar = wenku.jar;
+				
+			rq = rq.defaults({jar: jar});
+		}
+		next();	
+	
+	} else {
+		
+		console.log('> Can not get book id:' + id);
+		res.send('Can not get book id:' + id);
+	}
 
 });
 
@@ -70,10 +92,13 @@ app.get('/book/:id',function(req,res,next){
 	
 
 	// grab web content
-	rq({url}, function(error, response, html){
+	rq({url: url, encoding: null}, function(error, response, html){
 		
 		if(!error){
-			res.send(html);			
+
+			var html_dec = gbk.toString('utf-8', html);	
+
+			res.send(html_dec);			
 
 		} else {
 			res.send('Error:', error);
@@ -82,46 +107,5 @@ app.get('/book/:id',function(req,res,next){
 
 	
 });
-
-
-// login function
-function login (user,pwd){
-
-	console.log('> Logging in...');
-
-	var postData = {
-                                                                                                                                                     
-                username : user,                                                                                                                     
-                password : pwd,                                                                                                                      
-                usecookie : '315360000',
-		action : 'login'                                                                                                                
-                                                                                                                                                     
-        };
-
-	rq.post({url : 'http://www.wenku8.com/login.php?do=submit',qs: postData},function(err,res,body){
-
-
-		console.log('> Code:',res.statusCode);
-
-		//console.log(body);
-
-
-			
-		if(res.statusCode == 200){
-
-			console.log('> Logged in as ' + user);
-			var cookie = rq.cookie('key1=value1');
-
-			console.log('> Cookies:',cookie);
-			
-			
-		} else {
-			
-			console.log('> Logging failed.');
-
-		}
-
-	});
-};
 
 
