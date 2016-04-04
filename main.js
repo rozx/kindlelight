@@ -88,7 +88,7 @@ app.param('id',function(req,res,next,id){
 app.get('/book/:id',function(req,res,next){
 
 	var bid = req.params.id;
-	var url = "http://www.wenku8.com/modules/article/packshow.php?id="+ bid  +"&type=txtfull";
+	var url = wenku.url + '/modules/article/packtxt.php?id=' + bid;
 	
 
 	// grab web content

@@ -2,11 +2,13 @@
 a light novel site for kindle.
 source: wenku8.
 
-## v0.02
+## v0.0.2
 
 + Added gbk support.
 + Added cookie support.
 + minor changes.
+
+- TO DO next: cookies local storage, actual login check.
 
 ## v0.0.1
 
