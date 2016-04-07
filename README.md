@@ -2,6 +2,11 @@
 a light novel site for kindle.
 source: wenku8.
 
+## v0.0.3b
++ Add check user login status.
+
+
+
 ## v0.0.3
 + Added cookies local storage.
 

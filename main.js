@@ -87,6 +87,8 @@ app.param('id', function(req, res, next, id) {
 
         console.log('> Can not get book id:' + id);
         res.send('Can not get book id:' + id);
+
+	wenku.login(wenku.username,wenku.password);
     }
 
 });
