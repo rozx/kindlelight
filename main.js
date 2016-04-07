@@ -16,7 +16,9 @@ var gbk = require('gbk');
 
 // init request 
 
-var rq = require('request').defaults({jar: true});
+var rq = require('request').defaults({
+    jar: true
+});
 
 // init cheerio
 
@@ -29,23 +31,23 @@ console.log("> initialized.");
 
 // listening to port
 
-try{
+try {
 
-	app.listen(port);
+    app.listen(port);
 
-	console.log("> listening on port:" + port);
+    console.log("> listening on port:" + port);
 
-} catch (error){
+} catch (error) {
 
-	console.error("> an error just got caught! Maybe you should run it with sudo?");
-	console.error('> ',error);
+    console.error("> an error just got caught! Maybe you should run it with sudo?");
+    console.error('> ', error);
 
 }
 
 // logging in
 
-wenku.login('rozx','1990710');
-console.log('> logging to: ' + wenku.url);
+wenku.init();
+//console.log('> logging to: ' + wenku.url);
 
 // app config
 
@@ -55,57 +57,63 @@ app.use(express.static('data'));
 
 // index
 
-app.get('/', function (req, res) {
-                                                                                                                                                     
-	res.render('index',{title: 'Kindle Light Novel',message: 'hello world!'});                                                                                                                                              
+app.get('/', function(req, res) {
+
+    res.render('index', {
+        title: 'Kindle Light Novel',
+        message: 'hello world!'
+    });
 });
 
 // grab web content
-app.param('id',function(req,res,next,id){
+app.param('id', function(req, res, next, id) {
 
-	console.log('> Getting book id:' + id);
-		
+    console.log('> Getting book id:' + id);
 
-	if(wenku.loggedIn){
-		
-		if(!jar){
 
-			jar = wenku.jar;
-				
-			rq = rq.defaults({jar: jar});
-		}
-		next();	
-	
-	} else {
-		
-		console.log('> Can not get book id:' + id);
-		res.send('Can not get book id:' + id);
-	}
+    if (wenku.loggedIn) {
+
+        if (!jar) {
+
+            jar = wenku.jar;
+
+            rq = rq.defaults({
+                jar: jar
+            });
+        }
+        next();
+
+    } else {
+
+        console.log('> Can not get book id:' + id);
+        res.send('Can not get book id:' + id);
+    }
 
 });
 
 
-app.get('/book/:id',function(req,res,next){
+app.get('/book/:id', function(req, res, next) {
 
-	var bid = req.params.id;
-	var url = wenku.url + '/modules/article/packtxt.php?id=' + bid;
-	
+    var bid = req.params.id;
+    var url = wenku.url + '/modules/article/packtxt.php?id=' + bid;
 
-	// grab web content
-	rq({url: url, encoding: null}, function(error, response, html){
-		
-		if(!error){
 
-			var html_dec = gbk.toString('utf-8', html);	
+    // grab web content
+    rq({
+        url: url,
+        encoding: null
+    }, function(error, response, html) {
 
-			res.send(html_dec);			
+        if (!error) {
 
-		} else {
-			res.send('Error:', error);
-		}
-	});
+            var html_dec = gbk.toString('utf-8', html);
 
-	
+            res.send(html_dec);
+
+        } else {
+            res.send('Error:', error);
+        }
+    });
+
+
 });
-
-
