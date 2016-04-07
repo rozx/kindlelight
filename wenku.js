@@ -2,6 +2,8 @@
 var rq = require('request');
 var gbk = require('gbk');
 var fs = require('fs');
+var cheerio = require('cheerio');
+
 
 function wenku() {
 
@@ -191,6 +193,27 @@ function wenku() {
 
 
     };
+
+this.getBookInfo = function(html){
+
+
+	// bookInfo = {title: 'God World', id : '1922', image : 'xxx',chapters: [{title '1',url : 'http://dl.wenku8.com/packtxt.php?aid=1922&vid=67426&charset=utf-8'}]}
+	var bookInfo = {};
+	
+	// load cheerio
+	var $ = cheerio.load(html);
+
+	bookInfo.title = $('.grid caption a').text();
+	bookInfo.id = $('.grid caption a').attr('href').replace('http://www.wenku8.com/book/','').replace('.htm','');
+	bookInfo.image = 'http://img.wkcdn.com/image/1/' + bookInfo.id  + '/' + bookInfo.id +'s.jpg';
+
+	console.log(bookInfo.image.toString());
+
+	return bookInfo;	
+	
+	
+
+}
 
 
 }

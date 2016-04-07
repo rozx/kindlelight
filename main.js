@@ -110,7 +110,12 @@ app.get('/book/:id', function(req, res, next) {
 
             var html_dec = gbk.toString('utf-8', html);
 
-            res.send(html_dec);
+            //res.send(html_dec);
+
+	var bookInfo = wenku.getBookInfo(html);
+
+	res.send('<img src="'+ bookInfo.image  +'">');
+
 
         } else {
             res.send('Error:', error);
