@@ -4,7 +4,6 @@ var gbk = require('gbk');
 var fs = require('fs');
 var cheerio = require('cheerio');
 
-
 function wenku() {
 
 
@@ -19,8 +18,7 @@ function wenku() {
     this.jar = rq.jar();
     this.cookiePath = './data/cookies/wenku.cookie';
     this.localCookie = undefined;
-
-
+    this.bookInfo = undefined;
     var self = this;
 
     // functions                                                                                                                                     
@@ -162,7 +160,7 @@ function wenku() {
         rq({
             url: self.url + '/index.php',
             encoding: null,
-	    jar: self.jar
+            jar: self.jar
         }, function(error, response, html) {
 
             if (!error) {
@@ -171,18 +169,18 @@ function wenku() {
 
                 //console.log(html_dec);
 
-		//check if user is logged in
+                //check if user is logged in
 
-		if(html_dec.indexOf(keyword) > -1){
-		
-			self.loggedIn = true;
-			console.log('> user has logged in.');
-		} else {
-			self.loggedIn = false;
-			console.log('> user has not logged in');
+                if (html_dec.indexOf(keyword) > -1) {
 
-			if(autoLoggin) self.login(self.username,self.password);
-		}
+                    self.loggedIn = true;
+                    console.log('> user has logged in.');
+                } else {
+                    self.loggedIn = false;
+                    console.log('> user has not logged in');
+
+                    if (autoLoggin) self.login(self.username, self.password);
+                }
 
 
             } else {
@@ -194,26 +192,39 @@ function wenku() {
 
     };
 
-this.getBookInfo = function(html){
+    this.getBookInfo = function(html, bid) {
+
+        // bookInfo = {title: 'God World', id : '1922', image : 'xxx',author: 'xxx',desc: 'xxxxxx',publisher: 'xxx',chapters: [{title '1',url : 'http://dl.wenku8.com/packtxt.php?aid=1922&vid=67426&charset=utf-8'}]}
+
+        var bookInfo = {};
+        var url = self.url + '/book/' + bid + '.htm';
 
 
-	// bookInfo = {title: 'God World', id : '1922', image : 'xxx',chapters: [{title '1',url : 'http://dl.wenku8.com/packtxt.php?aid=1922&vid=67426&charset=utf-8'}]}
-	var bookInfo = {};
-	
-	// load cheerio
-	var $ = cheerio.load(html);
 
-	bookInfo.title = $('.grid caption a').text();
-	bookInfo.id = $('.grid caption a').attr('href').replace('http://www.wenku8.com/book/','').replace('.htm','');
-	bookInfo.image = 'http://img.wkcdn.com/image/1/' + bookInfo.id  + '/' + bookInfo.id +'s.jpg';
+        // load cheerio
+        var $ = cheerio.load(html);
 
-	console.log(bookInfo.image.toString());
+        //bookInfo.title = $('.grid caption a').text();
+        //bookInfo.id = $('.grid caption a').attr('href').replace('http://www.wenku8.com/book/', '').replace('.htm', '');
+        bookInfo.id = bid;
+        bookInfo.image = 'http://img.wkcdn.com/image/1/' + bookInfo.id + '/' + bookInfo.id + 's.jpg';
+	bookInfo.title = $('div table tr td table tr td span b').text();
+	bookInfo.author = $('div table tr td').eq(4).text().split('：')[1];
+	bookInfo.publisher = $('div table tr td').eq(3).text().split('：')[1];
+	bookInfo.desc = $('div table tr td span').eq(4).text();
 
-	return bookInfo;	
-	
-	
 
-}
+        return bookInfo;
+    }
+
+
+    this.getChapters = function(bookInfo) {
+
+
+        bookInfo.chapters = '';
+        return bookInfo;
+
+    }
 
 
 }

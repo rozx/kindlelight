@@ -71,7 +71,7 @@ app.param('id', function(req, res, next, id) {
     console.log('> Getting book id:' + id);
 
 
-    if (wenku.loggedIn) {
+    if (wenku.loggedIn && id) {
 
         if (!jar) {
 
@@ -88,7 +88,7 @@ app.param('id', function(req, res, next, id) {
         console.log('> Can not get book id:' + id);
         res.send('Can not get book id:' + id);
 
-	wenku.login(wenku.username,wenku.password);
+        wenku.login(wenku.username, wenku.password);
     }
 
 });
@@ -97,30 +97,34 @@ app.param('id', function(req, res, next, id) {
 app.get('/book/:id', function(req, res, next) {
 
     var bid = req.params.id;
-    var url = wenku.url + '/modules/article/packtxt.php?id=' + bid;
+    var bookInfo;
 
-
-    // grab web content
     rq({
-        url: url,
-        encoding: null
-    }, function(error, response, html) {
+        url: wenku.url + '/book/'  + bid + '.htm',
+        encoding: null,
+        jar: wenku.jar
+    }, function(err, respond, html) {
 
-        if (!error) {
+        if (!err) {
 
-            var html_dec = gbk.toString('utf-8', html);
+	// get basic book info
+	
+            html = gbk.toString('utf-8', html);
 
-            //res.send(html_dec);
 
-	var bookInfo = wenku.getBookInfo(html);
+            bookInfo = wenku.getBookInfo(html, bid);
+            console.log(bookInfo);
 
-	res.send('<img src="'+ bookInfo.image  +'">');
+	// get chapter info
 
+
+            res.send('<img src="' + bookInfo.image + '">');
 
         } else {
-            res.send('Error:', error);
+            throw err;
+            console.log('> Error in getting book info!' + err);
         }
-    });
 
+    });
 
 });
