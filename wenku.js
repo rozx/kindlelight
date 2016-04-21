@@ -3,6 +3,7 @@ var rq = require('request');
 var gbk = require('gbk');
 var fs = require('fs');
 var cheerio = require('cheerio');
+var urlp = require('url');
 
 function wenku() {
 
@@ -227,7 +228,6 @@ function wenku() {
         if(bookInfo.id != ''){
             
             var $ = cheerio.load(html);
-            var cid = 0;
 
             $('table tr').nextAll().each(function(i,elem){
                 
@@ -235,19 +235,17 @@ function wenku() {
 
                 title = $('.odd',elem).text();
                 ulink = $('.even a', elem).eq(1).attr('href');
-
+                vid = urlp.parse(ulink,true).query.vid;
 
                 bookInfo.chapters.push({
 
-                    id : cid,
+                    id : i,
+                    vid : vid,
                     title : title,
                     url : ulink
 
                 });
                 
-                
-                //console.log(title);
-                cid++;
             });
 
 
