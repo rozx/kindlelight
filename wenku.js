@@ -7,9 +7,9 @@ var cheerio = require('cheerio');
 function wenku() {
 
 
-    //init vars                                                                                                                                      
+    //init vars                                                                                      
     this.module = 'wenku';    
-    this.url  =  'http://www.wenku8.com';                                                                                                              
+    this.url  =  'http://www.wenku8.com';                                                                                                             
     this.username = 'rozx';
     this.password = '1990710';
     this.loggedIn = false;
@@ -21,17 +21,17 @@ function wenku() {
     this.bookInfo = undefined;
     var self = this;
 
-    // functions                                                                                                                                     
+    //functions                                                                                                                                     
 
     this.init = function(path) {
 
-        // check if local cookies is avavilabel                                                                                                      
+        // check if local cookies is available.                                                        
 
         var localJar = rq.jar();
 
         fs.access(self.cookiePath, fs.R_OK | fs.W_OK, (err) => {
 
-            // check whether the local cookies is available.                                                                                         
+            // check whether the local cookies is available.
 
             if (err) {
                 console.log('> local cookies is not available!');
@@ -55,7 +55,7 @@ function wenku() {
 
                     } else {
 
-                        //console.log(data);                                                                                                         
+                        //console.log(data);
 
                         console.log('> Read data.');
 
@@ -66,14 +66,14 @@ function wenku() {
 
 
 
-                        // localJar = rq.jar(new FileCookieStore(self.cookiePath));                                                                  
-
+                        // localJar = rq.jar(new FileCookieStore(self.cookiePath));                       
+            
                         console.log('> Logging with local cookies.');
 
                         self.jar = localJar;
                         self.localCookie = true;
 
-                        // test connection                                                                                                           
+                        // test connection                                                                                             
                         self.checkLogin(true);
                     }
                 });
@@ -105,13 +105,13 @@ function wenku() {
 
             console.log('> Code:', res.statusCode);
 
-            //console.log(body);                                                                                                                     
+            //console.log(body);                                                                                    
 
             if (res.statusCode == 200) {
 
-                // if loggined in                                                                                                                    
+                // if loggined in 
 
-                //console.log(gbk.toString('utf-8',body));                                                                                           
+                //console.log(gbk.toString('utf-8',body));                                                                                 
 
 
                 console.log('> Logged in as ' + user);
@@ -121,13 +121,13 @@ function wenku() {
 
                 console.log('> Cookies:', self.cookies);
 
-                // set var                                                                                                                           
+                // set var                                                                                
                 self.loggedIn = true;
                 self.username = user;
                 self.password = pwd;
 
 
-                // store local cookies                                                                                                               
+                // store local cookies                                                                                       
                 console.log('> Saving cookies to local..');
 
 
@@ -140,7 +140,7 @@ function wenku() {
                 });
 
             } else {
-                // login failed                                                                                                                      
+                // login failed                                                                                              
 
                 self.loggedIn = false;
                 console.log('> Logging failed.');
@@ -164,7 +164,6 @@ function wenku() {
         }, function(error, response, html) {
 
             if (!error) {
-
                 var html_dec = gbk.toString('utf-8', html);
 
                 //console.log(html_dec);
@@ -207,21 +206,56 @@ function wenku() {
         //bookInfo.title = $('.grid caption a').text();
         //bookInfo.id = $('.grid caption a').attr('href').replace('http://www.wenku8.com/book/', '').replace('.htm', '');
         bookInfo.id = bid;
-        bookInfo.image = 'http://img.wkcdn.com/image/1/' + bookInfo.id + '/' + bookInfo.id + 's.jpg';
-	bookInfo.title = $('div table tr td table tr td span b').text();
-	bookInfo.author = $('div table tr td').eq(4).text().split('：')[1];
-	bookInfo.publisher = $('div table tr td').eq(3).text().split('：')[1];
-	bookInfo.desc = $('div table tr td span').eq(4).text();
+        //bookInfo.image = 'http://img.wkcdn.com/image/1/' + bookInfo.id + '/' + bookInfo.id + 's.jpg';
+        bookInfo.image = $('div table tr td img').attr('src');
+        bookInfo.title = $('div table tr td table tr td span b').text();
+        bookInfo.author = $('div table tr td').eq(4).text().split('：')[1];
+        bookInfo.publisher = $('div table tr td').eq(3).text().split('：')[1];
+        bookInfo.desc = $('div table tr td span').eq(4).text();
 
 
         return bookInfo;
     }
 
 
-    this.getChapters = function(bookInfo) {
+    this.getChapterInfo = function(bookInfo,html) {
+
+        bookInfo.chapters = [];
+        
 
 
-        bookInfo.chapters = '';
+        if(bookInfo.id != ''){
+            
+            var $ = cheerio.load(html);
+            var cid = 0;
+
+            $('table tr').nextAll().each(function(i,elem){
+                
+                // for every chapters
+
+                title = $('.odd',elem).text();
+                ulink = $('.even a', elem).eq(1).attr('href');
+
+
+                bookInfo.chapters.push({
+
+                    id : cid,
+                    title : title,
+                    url : ulink
+
+                });
+                
+                
+                //console.log(title);
+                cid++;
+            });
+
+
+        
+            //console.log(bookInfo);
+        
+        }
+
         return bookInfo;
 
     }
@@ -229,6 +263,6 @@ function wenku() {
 
 }
 
-// exports                                                                                                                                           
+// exports                                                                                                                  
 
 module.exports = new wenku();

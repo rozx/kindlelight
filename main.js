@@ -4,7 +4,7 @@ console.log("> initializing...");
 
 var express = require('express');
 var app = express();
-var port = 8080;
+var port = 80;
 var jar;
 
 // init file system
@@ -112,13 +112,33 @@ app.get('/book/:id', function(req, res, next) {
             html = gbk.toString('utf-8', html);
 
 
-            bookInfo = wenku.getBookInfo(html, bid);
-            console.log(bookInfo);
+            var bookInfo = wenku.getBookInfo(html, bid);
 
-	// get chapter info
+            if(bookInfo.id != ''){
+                // get chapter info
+                
+                rq({url : wenku.url + '/modules/article/packtxt.php?id=' + bookInfo.id,
+                   encoding : null,
+                   jar : wenku.jar},function(err,respond2,html){
+                   
+                       if(!err){
+                           // if no error
+                            html = gbk.toString('utf-8',html);
+                            wenku.getChapterInfo(bookInfo,html);
+                            //console.log(bookInfo);
 
+                            res.send('<img src="' + bookInfo.id + '">' + '<br>' + JSON.stringify(bookInfo));
+                       } else {
+                            throw err;
+                            console.log('Error: ',err);
+                       }
+                   
+                   }
+                    );
 
-            res.send('<img src="' + bookInfo.image + '">');
+            }
+
+            //res.send('<img src="' + bookInfo.id + '">' + '<br>' + JSON.stringify(bookInfo));
 
         } else {
             throw err;
