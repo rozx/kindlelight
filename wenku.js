@@ -24,7 +24,7 @@ function wenku() {
 
     //functions                                                                                                                                     
 
-    this.init = function(path) {
+    this.init = function(callback) {
 
         // check if local cookies is available.                                                        
 
@@ -157,6 +157,8 @@ function wenku() {
     this.checkLogin = function(autoLoggin) {
 
         var keyword = 'logout';
+
+
 
         rq({
             url: self.url + '/index.php',

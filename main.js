@@ -6,6 +6,7 @@ var express = require('express');
 var app = express();
 var port = 80;
 var jar;
+var bookList = [];
 
 // init file system
 var fs = require('fs');
@@ -27,7 +28,12 @@ var cheerio = require('cheerio');
 // init wenku8 module
 var wenku = require('./wenku.js');
 
+// init downloader module
+var downloader = require('./downloader.js');
+
 console.log("> initialized.");
+
+
 
 // listening to port
 
@@ -47,6 +53,8 @@ try {
 // logging in
 
 wenku.init();
+downloader.init(false);
+
 //console.log('> logging to: ' + wenku.url);
 
 // app config
@@ -67,8 +75,8 @@ app.get('/', function(req, res) {
 
 // grab web content
 app.param('id', function(req, res, next, id) {
-
-    console.log('> Getting book id:' + id);
+    
+    console.log('> Client requesting book id:' + id);
 
 
     if (wenku.loggedIn && id) {
@@ -76,6 +84,7 @@ app.param('id', function(req, res, next, id) {
         if (!jar) {
 
             jar = wenku.jar;
+            downloader.jar = jar;
 
             rq = rq.defaults({
                 jar: jar
@@ -126,6 +135,27 @@ app.get('/book/:id', function(req, res, next) {
                             html = gbk.toString('utf-8',html);
                             wenku.getChapterInfo(bookInfo,html);
                             //console.log(bookInfo);
+                            
+                            // save info
+                            
+                            index = GetIndexById(bookInfo.id,bookList);
+
+                            if(index == -1){
+                            
+                                // if the id doesnt exist, create new
+
+                                bookList.push(bookInfo);
+                            
+                            } else {
+
+                                // update book info
+                                
+                                bookList[index] = bookInfo;
+
+                            }
+
+
+
 
                             res.send('<img src="' + bookInfo.id + '">' + '<br>' + JSON.stringify(bookInfo));
                        } else {
@@ -148,3 +178,62 @@ app.get('/book/:id', function(req, res, next) {
     });
 
 });
+
+
+
+
+app.get('/read/:bid',function(req,res,next){
+    
+    var bid = req.params.bid;
+    var bookInfo = GetBookById(bid,bookList);
+
+
+    if(bookInfo){
+
+        // start downloader
+        downloader.Start();
+
+        // ==== 
+    
+        console.log('> Getting book: [' + bid + '] content.');
+        res.send(bookInfo);
+
+    } else {
+   
+        console.log('> Book id:[' + bid + "] doesnt exist!");
+        res.send(': ( the content you are looking for is missing..');
+    
+    }
+
+});
+
+function GetIndexById(id,list){
+
+    for(i = 0; i < list.length; i++){
+    
+        if(list[i].id == id){
+        
+            return i;
+        }
+    }
+
+    return -1;
+
+}
+
+
+function GetBookById(id,list){
+
+    for(i = 0; i < list.length; i++){
+        
+        if(list[i].id == id){
+        
+            return list[i];
+        }
+
+    }
+
+    return false;
+
+
+}

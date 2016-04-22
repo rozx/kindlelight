@@ -2,6 +2,9 @@
 a light novel site for kindle.
 source: wenku8.
 
+## v0.0.5c
++ Working on downloader.. (20%)
+
 ## v0.0.5
 + Now it is able to get novel's chapter info.
 
