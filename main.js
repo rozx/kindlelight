@@ -7,6 +7,7 @@ var app = express();
 var port = 80;
 var jar;
 var bookList = [];
+var bookDir = './data/books/';
 
 // init file system
 var fs = require('fs');
@@ -157,7 +158,7 @@ app.get('/book/:id', function(req, res, next) {
 
 
 
-                            res.send('<img src="' + bookInfo.id + '">' + '<br>' + JSON.stringify(bookInfo));
+                            res.send('<img src="' + bookInfo.image + '">' + '<br>' + JSON.stringify(bookInfo));
                        } else {
                             throw err;
                             console.log('Error: ',err);
@@ -182,21 +183,43 @@ app.get('/book/:id', function(req, res, next) {
 
 
 
-app.get('/read/:bid',function(req,res,next){
+app.get('/read/:bid/:cid',function(req,res,next){
     
     var bid = req.params.bid;
+    var cid = req.params.cid;
     var bookInfo = GetBookById(bid,bookList);
+    
 
+    if(!cid) cid = 0;
 
-    if(bookInfo){
+    if(bookInfo && bookInfo.chapters[cid]){
 
         // start downloader
-        downloader.Start();
+        if (downloader.status == downloader.READY) downloader.start();
 
         // ==== 
     
-        console.log('> Getting book: [' + bid + '] content.');
-        res.send(bookInfo);
+        console.log('> Getting book: [' + bid + '/' + cid  + '] content.');
+
+        
+
+
+
+        downloader.queue(
+            {
+            url : bookInfo.chapters[cid].url,
+            dir : bookDir + '/' + bookInfo.id + '/' + bookInfo.chapters[cid].vid + '.txt',
+            callback : function(data){
+            
+            //console.log(data);
+
+            res.send(data);
+        
+        }});
+
+
+
+        //res.send(bookInfo);
 
     } else {
    
@@ -237,3 +260,4 @@ function GetBookById(id,list){
 
 
 }
+
