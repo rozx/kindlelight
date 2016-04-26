@@ -35,19 +35,19 @@ function wenku() {
             // check whether the local cookies is available.
 
             if (err) {
-                console.log('> local cookies is not available!');
+                console.log('Wenku > local cookies is not available!');
                 self.localCookie = false;
 
                 self.login(self.username, self.password);
 
             } else {
-                console.log('> Found local cookies!');
+                console.log('Wenku > Found local cookies!');
 
                 fs.readFile(self.cookiePath, 'utf-8', (err, data) => {
 
                     if (err) {
 
-                        console.log('> File read error, online logging..');
+                        console.log('Wenku > File read error, online logging..');
 
                         self.localCookie = false;
 
@@ -58,7 +58,7 @@ function wenku() {
 
                         //console.log(data);
 
-                        console.log('> Read data.');
+                        console.log('Wenku > Read data.');
 
                         var cookie = rq.cookie(data);
                         var url = self.url;
@@ -69,7 +69,7 @@ function wenku() {
 
                         // localJar = rq.jar(new FileCookieStore(self.cookiePath));                       
             
-                        console.log('> Logging with local cookies.');
+                        console.log('Wenku > Logging with local cookies.');
 
                         self.jar = localJar;
                         self.localCookie = true;
@@ -87,7 +87,7 @@ function wenku() {
 
     this.login = function(user, pwd) {
 
-        console.log('> Logging in...');
+        console.log('Wenku > Logging in...');
 
         var postData = {
 
@@ -115,12 +115,12 @@ function wenku() {
                 //console.log(gbk.toString('utf-8',body));                                                                                 
 
 
-                console.log('> Logged in as ' + user);
+                console.log('Wenku > Logged in as ' + user);
                 self.cookies = self.jar.getCookieString(self.url);
 
 
 
-                console.log('> Cookies:', self.cookies);
+                console.log('Wenku > Cookies:', self.cookies);
 
                 // set var                                                                                
                 self.loggedIn = true;
@@ -129,14 +129,14 @@ function wenku() {
 
 
                 // store local cookies                                                                                       
-                console.log('> Saving cookies to local..');
+                console.log('Wenku > Saving cookies to local..');
 
 
                 fs.writeFile(self.cookiePath, self.cookies, (err) => {
 
                     if (err) console.log(err);
 
-                    console.log('> Local cookies saved.');
+                    console.log('Wenku > Local cookies saved.');
 
                 });
 
@@ -144,7 +144,7 @@ function wenku() {
                 // login failed                                                                                              
 
                 self.loggedIn = false;
-                console.log('> Logging failed.');
+                console.log('Wenku > Logging failed.');
 
             }
 
@@ -176,10 +176,10 @@ function wenku() {
                 if (html_dec.indexOf(keyword) > -1) {
 
                     self.loggedIn = true;
-                    console.log('> user has logged in.');
+                    console.log('Wenku > User has logged in.');
                 } else {
                     self.loggedIn = false;
-                    console.log('> user has not logged in');
+                    console.log('Wenku > User has not logged in');
 
                     if (autoLoggin) self.login(self.username, self.password);
                 }
@@ -196,7 +196,7 @@ function wenku() {
 
     this.getBookInfo = function(html, bid) {
 
-        // bookInfo = {title: 'God World', id : '1922', image : 'xxx',author: 'xxx',desc: 'xxxxxx',publisher: 'xxx',chapters: [{title '1',url : 'http://dl.wenku8.com/packtxt.php?aid=1922&vid=67426&charset=utf-8'}]}
+        // bookInfo = {title: 'God World', id : '1922', image : 'xxx',author: 'xxx',desc: 'xxxxxx',publisher: 'xxx',lastUpdate : 1231232131,chapters: [{title '1',url : 'http://dl.wenku8.com/packtxt.php?aid=1922&vid=67426&charset=utf-8'}]}
 
         var bookInfo = {};
         var url = self.url + '/book/' + bid + '.htm';
@@ -215,7 +215,7 @@ function wenku() {
         bookInfo.author = $('div table tr td').eq(4).text().split('：')[1];
         bookInfo.publisher = $('div table tr td').eq(3).text().split('：')[1];
         bookInfo.desc = $('div table tr td span').eq(4).text();
-
+        bookInfo.lastUpdate = Date.now(); 
 
         return bookInfo;
     }

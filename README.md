@@ -2,6 +2,11 @@
 a light novel site for kindle.
 source: wenku8.
 
+## v0.0.7
++ Local file storage(cover,book,conf).
++ Downloader - 90%
+
+
 ## v0.0.6
 + Downloader - 60%
 + Now able to download books and save it to local.
