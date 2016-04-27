@@ -196,7 +196,7 @@ function wenku() {
 
     this.getBookInfo = function(html, bid) {
 
-        // bookInfo = {title: 'God World', id : '1922', image : 'xxx',author: 'xxx',desc: 'xxxxxx',publisher: 'xxx',lastUpdate : 1231232131,chapters: [{title '1',url : 'http://dl.wenku8.com/packtxt.php?aid=1922&vid=67426&charset=utf-8'}]}
+        // bookInfo = {_id: '1', title: 'God World', id : '1922', image : 'xxx',author: 'xxx',desc: 'xxxxxx',publisher: 'xxx',lastUpdate : 1231232131,chapters: [{title '1',url : 'http://dl.wenku8.com/packtxt.php?aid=1922&vid=67426&charset=utf-8'}]}
 
         var bookInfo = {};
         var url = self.url + '/book/' + bid + '.htm';

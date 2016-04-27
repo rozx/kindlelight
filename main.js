@@ -6,7 +6,7 @@ var express = require('express');
 var app = express();
 var port = 80;
 var jar;
-var bookList = [];
+var bookList;
 var bookDir = './data/books/';
 var bookFile = bookDir + 'bookList.json';
 
@@ -31,6 +31,9 @@ var cheerio = require('cheerio');
 
 var repeat = require('repeat');
 
+// init tingodb
+
+var db = require('./db.js');
 
 // init wenku8 module
 var wenku = require('./wenku.js');
@@ -59,12 +62,8 @@ try {
 
 // init
 
-wenku.init();
-downloader.init(false);
-repeat(TimedJobs).every(5, 'min').start.in(60, 'sec');
 Init();
 
-//console.log('> logging to: ' + wenku.url);
 
 // app config
 
@@ -91,16 +90,15 @@ app.get('/*', function(req, res, next) {
 
 // debug
 
-var messages =[];
+var messages = [];
 
 app.get('/debug/*', function(req, res, next) {
-    
 
-    console.log("We got a hit @ " + new Date()); 
-    //console.log(req);    
 
-    if(req.url === '/favicon.ico') messages.push('favicon request!');
-    if(req.accept == '*/*') messages.push('duplicate request!');
+    console.log("We got a hit @ " + new Date());
+
+    if (req.url === '/favicon.ico') messages.push('favicon request!');
+    if (req.accept == '*/*') messages.push('duplicate request!');
 
 
     messages.push(req.url);
@@ -154,16 +152,21 @@ app.param('id', function(req, res, next, id) {
 
 });
 
-app.get('/book/cover/:id',function(req,res){
+app.get('/book/cover/:id', function(req, res) {
 
     var bid = req.params.id;
-    var bookInfo = GetBookById(bid,bookList);
-    
-    GetCover(bookInfo,function(data){
 
-        res.writeHead(200, {'Content-Type': 'image/jpg' });
-        res.end(data,'binary');
-    })
+    GetBookById(bid, function(bookInfo) {
+
+
+        GetCover(bookInfo, function(data) {
+
+            res.writeHead(200, {
+                'Content-Type': 'image/jpg'
+            });
+            res.end(data, 'binary');
+        });
+    });
 
 });
 
@@ -171,30 +174,33 @@ app.get('/book/cover/:id',function(req,res){
 app.get('/book/:id', function(req, res, next) {
 
     var bid = req.params.id;
-	var bookInfo;
-	
-	GetBookInfo(bid,function(bi){
-	
-		bookInfo = bi;
-        res.send('<img src="/book/cover/' + bid  + '">' + '<br>' + JSON.stringify(bookInfo));	
-	});
+    var bookInfo;
+
+    GetBookInfo(bid, function(bi) {
+
+        bookInfo = bi;
+        res.send('<img src="/book/cover/' + bid + '">' + '<br>' + JSON.stringify(bookInfo));
+    });
 
 });
 
 app.get('/read/:bid/', function(req, res, next) {
 
     var bid = req.params.bid;
-    var bookInfo = GetBookById(bid, bookList);
 
-    if (bookInfo) {
-        // if book exist
-        res.send(bookInfo);
+    GetBookInfo(bid, function(bookInfo) {
 
-    } else {
+        if (bookInfo) {
+            // if book exist
+            res.send(bookInfo);
+
+        } else {
 
 
-        res.send('book doesn\'t exist :<');
-    }
+            res.send('book doesn\'t exist :<');
+        }
+
+    });
 
 
 });
@@ -205,94 +211,108 @@ app.get('/read/:bid/:cid', function(req, res, next) {
 
     var bid = req.params.bid;
     var cid = req.params.cid;
-    var bookInfo = GetBookById(bid, bookList);
+
+    GetBookById(bid, function(bookInfo) {
+
+        if (!cid) cid = 0;
+
+        if (bookInfo && bookInfo.chapters[cid]) {
+
+            // start downloader
+            //if (downloader.status == downloader.READY) downloader.start();
+
+            // ==== 
+
+            console.log('> Getting book: [' + bid + '/' + cid + '] content.');
+
+            GetBook(cid, bookInfo, function(data) {
 
 
-    if (!cid) cid = 0;
+                //console.log(data);
+                res.send(data);
 
-    if (bookInfo && bookInfo.chapters[cid]) {
-
-        // start downloader
-        //if (downloader.status == downloader.READY) downloader.start();
-
-        // ==== 
-
-        console.log('> Getting book: [' + bid + '/' + cid + '] content.');
-
-        GetBook(cid, bookInfo, function(data) {
-
-
-            //console.log(data);
-            res.send(data);
-
-        });
+            });
 
 
 
-        //res.send(bookInfo);
+            //res.send(bookInfo);
 
-    } else {
+        } else {
 
-        console.log('> Book id:[' + bid + "] doesnt exist!");
-        res.send(': ( the content you are looking for is missing..');
+            console.log('> Book id:[' + bid + "] doesnt exist!");
 
-    }
+            res.status(404);
+            res.json({
+                error: 'Invalid Book id.'
+            });
+            //res.send(': ( the content you are looking for is missing..');
+
+        }
+
+    });
 
 });
 
-function UpdateBookList(bookInfo) {
-    
-    // check if the info is empty
-    if(!bookInfo.title) return false;
+app.use(function(req, res, next) {
 
-    index = GetIndexById(bookInfo.id, bookList);
+    res.status(404);
+    res.send('Invalid URL');
+});
 
-    if (index == -1) {
 
-        //if the id doesnt exist, create new
+// ============================= functions ======================
 
-        bookList.push(bookInfo);
+function UpdateBookList(bookInfo, callback) {
 
-    } else {
+    var cursor = bookList.find({
+        'id': bookInfo.id
+    });
 
-        // update book info
+    cursor.toArray(function(err, doc) {
 
-        bookList[index] = bookInfo;
 
-    }
+        if (doc.length == 0) {
 
+            // insert new record
+
+            bookList.insert(bookInfo);
+
+            console.log('> New record has been inserted.');
+            // callback
+
+            if (callback) callback(err);
+
+
+        } else {
+
+            // update current record
+
+            bookList.update({
+                'id': bookInfo.id
+            }, bookInfo);
+
+            if (callback) callback(err);
+
+            console.log('> Record has been updated. Id:', bookInfo.id);
+
+        }
+
+    });
 }
 
 
-function GetIndexById(id, list) {
 
-    for (i = 0; i < list.length; i++) {
+function GetBookById(id, callback) {
 
-        if (list[i].id == id) {
+    var cursor = bookList.find({
+        'id': id
+    });
 
-            return i;
-        }
-    }
+    cursor.toArray(function(err, doc) {
 
-    return -1;
+        if (doc) callback(doc[0]);
 
-}
-
-
-function GetBookById(id, list) {
-
-    for (i = 0; i < list.length; i++) {
-
-        if (list[i].id == id) {
-
-            return list[i];
-        }
-
-    }
-
-    return false;
-
-
+    });
 }
 
 
@@ -314,9 +334,9 @@ function GetCover(bookInfo, callback) {
 
                     // call back
 
-                    fs.readFile(bookDir + bookInfo.id + '/' + 'image.jpg', function(err, data){ 
-                        
-                        if(!err) callback(data);
+                    fs.readFile(bookDir + bookInfo.id + '/' + 'image.jpg', function(err, data) {
+
+                        if (!err) callback(data);
 
                     });
 
@@ -337,77 +357,80 @@ function GetCover(bookInfo, callback) {
 
 }
 
-function GetBookInfo(bid,callback){
+function GetBookInfo(bid, callback) {
 
-	var bookInfo = GetBookById(bid, bookList);
+    var bookInfo;
 
-    if (!bookInfo) {
+    GetBookById(bid, function(doc) {
 
-        rq({
-            url: wenku.url + '/book/' + bid + '.htm',
-            encoding: null,
-            jar: wenku.jar
-        }, function(err, respond, html) {
+        bookInfo = doc;
 
-            if (!err) {
+        if (!bookInfo) {
 
-                // get basic book info
+            rq({
+                url: wenku.url + '/book/' + bid + '.htm',
+                encoding: null,
+                jar: wenku.jar
+            }, function(err, respond, html) {
 
-                html = gbk.toString('utf-8', html);
+                if (!err) {
 
+                    // get basic book info
 
-                var bookInfo = wenku.getBookInfo(html, bid);
-
-                if (bookInfo.id != '') {
-                    // get chapter info
-
-                    rq({
-                        url: wenku.url + '/modules/article/packtxt.php?id=' + bookInfo.id,
-                        encoding: null,
-                        jar: wenku.jar
-                    }, function(err, respond2, html) {
-
-                        if (!err) {
-                            // if no error
-                            html = gbk.toString('utf-8', html);
-                            wenku.getChapterInfo(bookInfo, html);
-                            //console.log(bookInfo);
-
-                            // save info
-
-                            UpdateBookList(bookInfo);
+                    html = gbk.toString('utf-8', html);
 
 
-                            // save to local
+                    var bookInfo = wenku.getBookInfo(html, bid);
 
-                            Save();
-							
-							// callback
-							
-							callback(bookInfo);
-							
-                        } else {
-                            
+                    if (bookInfo.id != '') {
+                        // get chapter info
 
-                            console.log('Error: ', err);
-                        }
+                        rq({
+                            url: wenku.url + '/modules/article/packtxt.php?id=' + bookInfo.id,
+                            encoding: null,
+                            jar: wenku.jar
+                        }, function(err, respond2, html) {
 
-                    });
+                            if (!err) {
+                                // if no error
+                                html = gbk.toString('utf-8', html);
+                                wenku.getChapterInfo(bookInfo, html);
+                                //console.log(bookInfo);
 
+                                // save info
+
+                                UpdateBookList(bookInfo);
+
+                                // callback
+
+                                callback(bookInfo);
+
+                            } else {
+
+
+                                console.log('Error: ', err);
+                            }
+
+                        });
+
+                    }
+
+
+                } else {
+
+                    console.log('> Error in getting book info!' + err);
                 }
 
+            });
 
-            } else {
+        } else {
 
-                console.log('> Error in getting book info!' + err);
-            }
+            callback(bookInfo);
+        }
 
-        });
 
-    } else {
-		
-		callback(bookInfo);
-	}
+    });
+
 
 }
 
@@ -452,52 +475,14 @@ function GetBook(cid, bookInfo, callback) {
 
 }
 
-function TimedJobs() {
-
-    console.log('TimedJobs > Saving book list...');
-
-    Save();
-
-
-}
-
-
 function Init() {
 
-    // read JSON book list
-
-    fs.readJson(bookFile, function(err, packageObj) {
-
-        if (!err) {
-
-            console.log('> Local book list exists, reading..');
-
-            bookList = packageObj;
-
-        }
-
-    })
+    wenku.init();
+    downloader.init(false);
+    //repeat(TimedJobs).every(5, 'min').start.in(60, 'sec');
 
 
-}
+    // init collections
 
-
-function Save() {
-
-    fs.outputJson(bookFile, bookList, function(err) {
-
-        if (!err) {
-
-            console.log('> Book list saved.');
-
-        } else {
-
-
-            console.log('> ', err);
-            //throw err;
-
-        }
-
-    });
-
+    bookList = db.collection('books');
 }

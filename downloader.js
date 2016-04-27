@@ -9,7 +9,7 @@ function downloader() {
     var jar;
     var queueList = [];
     var taskFilePath = './data/tasks/downloader.task';
-    var READY = 0,
+    const READY = 0,
         DOWNLOADING = 1,
         WRITTING = 2,
         ERROR = 3,

@@ -1,6 +1,10 @@
-# kindlelight
+#kindlelight
 a light novel site for kindle.
 source: wenku8.
+
+## v0.0.7b
++ Now using TingoDB.
+
 
 ## v0.0.7
 + Local file storage(cover,book,conf).

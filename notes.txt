@@ -10,3 +10,7 @@ exec('mobi/kindlegen epub/nodejs-manual.epub', function(err, stdout, stderr) {
   if (err) console.log(err);
 
 });
+
+
+
+https://docs.mongodb.org/getting-started/node/aggregation/
