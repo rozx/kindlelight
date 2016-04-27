@@ -35,13 +35,13 @@ var repeat = require('repeat');
 
 // init tingodb
 
-var db = require('./db.js');
+var db = require('./libs/db.js');
 
 // init wenku8 module
-var wenku = require('./wenku.js');
+var wenku = require('./libs/wenku.js');
 
 // init downloader module
-var downloader = require('./downloader.js');
+var downloader = require('./libs/downloader.js');
 
 // init favicon
 var favicon = require('serve-favicon');
@@ -460,7 +460,7 @@ function GetBook(cid, bookInfo, callback) {
 
 
     // check local
-    fs.readFile(bookDir + bookInfo.id + '/' + bookInfo.chapters[cid].vid + '.txt', 'utf8', function(err, data) {
+    fs.readFile(bookDir + bookInfo.id + '/txt/' + bookInfo.chapters[cid].vid + '.txt', 'utf8', function(err, data) {
 
         if (err) {
 
@@ -472,7 +472,7 @@ function GetBook(cid, bookInfo, callback) {
 
             downloader.queue({
                 url: bookInfo.chapters[cid].url,
-                dir: bookDir + bookInfo.id + '/' + bookInfo.chapters[cid].vid + '.txt',
+                dir: bookDir + bookInfo.id + '/txt/' + bookInfo.chapters[cid].vid + '.txt',
                 encoding: 'utf8',
                 callback: function(data) {
 
