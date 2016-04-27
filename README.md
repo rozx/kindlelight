@@ -2,6 +2,11 @@
 a light novel site for kindle.
 source: wenku8.
 
+## v0.0.7c
++ Serving favicon.ico
++ Dupilcate requests solved(hopefully).
++ Reworte package.json
+
 ## v0.0.7b
 + Now using TingoDB.
 
