@@ -10,6 +10,8 @@ var bookList;
 var bookDir = './data/books/';
 var bookFile = bookDir + 'bookList.json';
 
+// init util
+var util = require('util');
 // init file system
 var fs = require('fs-extra');
 
@@ -41,9 +43,17 @@ var wenku = require('./wenku.js');
 // init downloader module
 var downloader = require('./downloader.js');
 
+// init favicon
+var favicon = require('serve-favicon');
+
 console.log("> initialized.");
 
+// app config
 
+app.set('view engine', 'jade');
+app.use(express.static('public'));
+//app.use(express.static('./data/books'));
+app.use(favicon(__dirname + '/public/favicon.ico'));
 
 // listening to port
 
@@ -65,12 +75,6 @@ try {
 Init();
 
 
-// app config
-
-app.set('view engine', 'jade');
-app.use(express.static('public'));
-app.use(express.static('data'));
-
 // index
 
 app.get('/', function(req, res) {
@@ -81,10 +85,21 @@ app.get('/', function(req, res) {
     });
 });
 
-app.get('/*', function(req, res, next) {
+app.get('*', function(req, res, next) {
 
-    //console.log(req.url);
-    next();
+    // preven duplicate requests
+
+    if (req.headers.accept == "*/*") {
+        //console.log('duplicate request!');
+        
+        //console.log(req.headers);
+
+        res.status(404);
+        res.end('Duplicate request!');
+    } else {
+
+        next();
+    }
 
 });
 
@@ -98,14 +113,14 @@ app.get('/debug/*', function(req, res, next) {
     console.log("We got a hit @ " + new Date());
 
     if (req.url === '/favicon.ico') messages.push('favicon request!');
-    if (req.accept == '*/*') messages.push('duplicate request!');
+    if (req.headers.accept == "*/*") messages.push('duplicate request!');
 
 
     messages.push(req.url);
 
     messages.push(req.headers);
 
-    messages.push(req.params);
+    //messages.push(req);
 
 
 
@@ -115,8 +130,9 @@ app.get('/debug/*', function(req, res, next) {
 
     for (var i = 0; i < messages.length; ++i) {
 
-        res.write("\n\n" + JSON.stringify(messages[i]));
-
+        //console.log(messages[i]);
+        //res.write("\n\n" + JSON.stringify(messages[i]));
+        res.write("\n\n" + util.inspect(messages[i]));
     }
 
     res.end();
@@ -126,7 +142,7 @@ app.get('/debug/*', function(req, res, next) {
 // grab web content
 app.param('id', function(req, res, next, id) {
 
-    console.log('> Client requesting book id:' + id);
+    //console.log('> Client requesting book id:' + id);
 
 
     if (wenku.loggedIn && id) {
@@ -155,6 +171,8 @@ app.param('id', function(req, res, next, id) {
 app.get('/book/cover/:id', function(req, res) {
 
     var bid = req.params.id;
+    
+    console.log('> Cover requested:',bid);
 
     GetBookById(bid, function(bookInfo) {
 
@@ -175,6 +193,8 @@ app.get('/book/:id', function(req, res, next) {
 
     var bid = req.params.id;
     var bookInfo;
+
+    console.log('> Bookinfo requested, id:', bid);
 
     GetBookInfo(bid, function(bi) {
 
@@ -257,6 +277,7 @@ app.use(function(req, res, next) {
 
     res.status(404);
     res.send('Invalid URL');
+
 });
 
 

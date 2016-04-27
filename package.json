@@ -1,9 +1,10 @@
 {
   "name": "kindlelight",
-  "version": "0.0.2",
+  "version": "0.0.7-c",
+  "author": "rozx",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www"
+    "start": "sudo node ./main.js"
   },
   "dependencies": {
     "body-parser": "~1.13.2",
@@ -12,6 +13,29 @@
     "express": "~4.13.1",
     "jade": "^1.11.0",
     "morgan": "~1.6.1",
-    "serve-favicon": "~2.3.0"
-  }
+    "serve-favicon": "~2.3.0", 
+    "cheerio": "*", 
+    "fs-extra": "*",
+    "gbk": "*",
+    "repeat": "*",
+    "request": "*",
+    "serve-favicon": "*",
+    "tingodb": "*",
+    "tough-cookie-filestore": "*"
+  },
+  "description": "a light novel site for kindle. source: wenku8.",
+  "main": "main.js",
+  "devDependencies": {},
+  "keywords": [
+    "kindlelight"
+  ],
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rozx/kindlelight.git"
+  },
+  "bugs": {
+    "url": "https://github.com/rozx/kindlelight/issues"
+  },
+  "homepage": "https://github.com/rozx/kindlelight#readme"
 }
