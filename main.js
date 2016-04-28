@@ -43,6 +43,9 @@ var wenku = require('./libs/wenku.js');
 // init downloader module
 var downloader = require('./libs/downloader.js');
 
+// init converter
+var conv = require('./libs/converter.js');
+
 // init favicon
 var favicon = require('serve-favicon');
 
@@ -249,7 +252,7 @@ app.get('/read/:bid/:cid', function(req, res, next) {
 
 
                 //console.log(data);
-                res.send(data);
+                res.send({data : data});
 
             });
 
@@ -270,6 +273,36 @@ app.get('/read/:bid/:cid', function(req, res, next) {
         }
 
     });
+
+});
+
+
+app.get('/convert/:bid/:cid',function(req,res,next){
+
+    var bid = req.params.bid;
+    var cid = req.params.cid;
+
+
+    GetBookById(bid,function(bookInfo){
+        
+       console.log('> Start converting:',bookInfo.title);
+        
+       conv.queue(cid,bookInfo,function(err,option){
+       
+
+            if(!err){
+				res.send(option);
+            
+            } else {
+            
+				res.status(404);
+				res.send('File not available.');
+            }
+       
+       });
+    
+    });
+
 
 });
 
@@ -500,6 +533,7 @@ function Init() {
 
     wenku.init();
     downloader.init(false);
+    conv.init();
     //repeat(TimedJobs).every(5, 'min').start.in(60, 'sec');
 
 

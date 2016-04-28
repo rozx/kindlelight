@@ -2,6 +2,11 @@
 a light novel site for kindle.
 source: wenku8.
 
+## v0.0.8
++ Converter is now working(60%)
++ Next: Convert epud to mobi.
+
+
 ## v0.0.7c
 + Serving favicon.ico
 + Dupilcate requests solved(hopefully).
