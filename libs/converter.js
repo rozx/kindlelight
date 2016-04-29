@@ -46,20 +46,20 @@ var converter = function() {
                 });
 
 
+            self.saveTask();
+            self.convertBook();
+
             } else {
 
                 console.log('Converter > Failed to queue task:', bookInfo.title, bookInfo.chapters[cid].title);
+                callback(err,null);
 
             }
         });
 
         console.log('Converter > Tasks:', taskList.length);
 
-        // save tasklist
-
-        self.saveTask();
         self.convertBook();
-
     }
 
     this.convertBook = function() {

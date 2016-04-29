@@ -2,6 +2,9 @@
 a light novel site for kindle.
 source: wenku8.
 
+## v0.0.9b
++ Bugs fixed.
+
 ## v0.0.9
 + Added epub to mobi convertion.
 + Bugs fixed.
