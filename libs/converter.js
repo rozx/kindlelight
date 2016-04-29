@@ -33,12 +33,24 @@ var converter = function() {
 
     this.queue = function(cid, bookInfo, callback) {
 
-        console.log('Converter > Queued task:', bookInfo.title, bookInfo.chapters[cid].title);
+        fs.access('data/books/' + bookInfo.id + '/txt/' + bookInfo.chapters[cid].vid + '.txt', fs.R_OK | fs.W_OK, (err) => {
 
-        taskList.push({
-            cid: cid,
-            bookInfo: bookInfo,
-            callback: callback
+
+            if (!err) {
+                console.log('Converter > Queued task:', bookInfo.title, bookInfo.chapters[cid].title);
+
+                taskList.push({
+                    cid: cid,
+                    bookInfo: bookInfo,
+                    callback: callback
+                });
+
+
+            } else {
+
+                console.log('Converter > Failed to queue task:', bookInfo.title, bookInfo.chapters[cid].title);
+
+            }
         });
 
         console.log('Converter > Tasks:', taskList.length);
@@ -141,7 +153,7 @@ var converter = function() {
                                         kg.convert(epubPath, function(err, out) {
 
 
-                                            fs.move(orimobiPath, mobiPath, function(err) {
+                                            fs.move(orimobiPath, mobiPath,{clobber : true}, function(err) {
 
                                                 if (!err) {
 
@@ -164,17 +176,15 @@ var converter = function() {
 
                                         // done converting epub
 
-                                        taskList[0].callback(err, null);
-
                                     }
 
-
+                                    taskList[0].callback(err, null);
 
                                 });
 
                                 // keep convert
 
-
+                                            
 
                             }, function(err) {
 
