@@ -17,18 +17,22 @@ var converter = function() {
 
         fs.readJson(taskPath, function(err, t) {
 
-            if (!err)
+            status = READY;
+
+            if (!err) {
                 taskList = t;
 
+                
+            } else {
+
+                taskList = [];
+            }
+
+            console.log('Converter > Initialized.', taskList.length, 'tasks waiting.');
+
+
+            if (taskList.length > 0) self.convertBook();
         });
-
-        if (!taskList)
-            taskList = [];
-
-        status = READY;
-
-        console.log('Converter > Initialized.');
-
     };
 
     this.queue = function(cid, bookInfo, callback) {
@@ -46,28 +50,45 @@ var converter = function() {
                 });
 
 
-            self.saveTask();
-            self.convertBook();
+                self.saveTask();
+                self.convertBook();
+
+
+                if (taskList.length > 0) {
+                    if (callback) callback(new Error('Converter is busy!'), null);
+                }
+
+                console.log('Converter > Tasks:', taskList.length);
 
             } else {
 
                 console.log('Converter > Failed to queue task:', bookInfo.title, bookInfo.chapters[cid].title);
-                callback(err,null);
+                callback(err, null);
 
             }
         });
 
-        console.log('Converter > Tasks:', taskList.length);
-
-        self.convertBook();
+        //self.convertBook();
     }
 
     this.convertBook = function() {
 
         // check status
-        if (status == READY && taskList.length > 0) {
+        if (status == READY && taskList.length > 0 && taskList[0].bookInfo) {
+            
+            // set status to busy
 
             status = WORKING;
+
+            // if no callback set default callback
+            
+            if(!taskList[0].callback) taskList[0].callback = function(){
+            
+                console.log('Converter > No callback!');
+            };
+
+
+            // Start
 
             var chapters;
 
@@ -153,7 +174,9 @@ var converter = function() {
                                         kg.convert(epubPath, function(err, out) {
 
 
-                                            fs.move(orimobiPath, mobiPath,{clobber : true}, function(err) {
+                                            fs.move(orimobiPath, mobiPath, {
+                                                clobber: true
+                                            }, function(err) {
 
                                                 if (!err) {
 
@@ -184,7 +207,7 @@ var converter = function() {
 
                                 // keep convert
 
-                                            
+
 
                             }, function(err) {
 
@@ -204,6 +227,7 @@ var converter = function() {
                             });
 
                         } else {
+
                             taskList[0].callback(err, null);
 
                             // err
@@ -228,7 +252,7 @@ var converter = function() {
 
                     self.remove(0);
 
-                    console.log('Converter > Error when converting:', err);
+                    console.log('Converter > Error when reading file:', err);
 
                     // keep convert
 
@@ -240,7 +264,13 @@ var converter = function() {
 
         } else {
 
-            console.log('Converter > No task to do..');
+            console.log('Converter > No task to do or Converter is working.');
+
+            if (status == READY) taskList = [];
+
+
+
+            //self.saveTask();
         }
 
     }
@@ -313,7 +343,7 @@ var converter = function() {
 
         console.log('Converter > Saving tasks..');
 
-        fs.outputFile(taskPath, function(err) {
+        fs.outputJson(taskPath, taskList, function(err) {
 
             if (!err) {
 

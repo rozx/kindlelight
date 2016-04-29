@@ -93,7 +93,8 @@ app.get('*', function(req, res, next) {
     // preven duplicate requests
 
     if (req.headers.accept == "*/*") {
-        //console.log('duplicate request!');
+
+        console.log('duplicate request!');
         
         //console.log(req.headers);
 
@@ -214,6 +215,8 @@ app.get('/read/:bid/', function(req, res, next) {
     GetBookInfo(bid, function(bookInfo) {
 
         if (bookInfo) {
+
+            GetCover(bookInfo);
             // if book exist
             res.send(bookInfo);
 
@@ -249,7 +252,11 @@ app.get('/read/:bid/:cid', function(req, res, next) {
             console.log('> Getting book: [' + bid + '/' + cid + '] content.');
 
             GetBook(cid, bookInfo, function(data) {
+                
 
+                // also get cover
+
+                GetCover(bookInfo);
 
                 //console.log(data);
                 res.send({data : data});
@@ -390,7 +397,7 @@ function GetCover(bookInfo, callback) {
 
                     fs.readFile(bookDir + bookInfo.id + '/' + 'image.jpg', function(err, data) {
 
-                        if (!err) callback(data);
+                        if (!err && callback) callback(data);
 
                     });
 
@@ -402,7 +409,7 @@ function GetCover(bookInfo, callback) {
 
             // file exists
 
-            callback(data);
+            if (callback) callback(data);
 
         }
 

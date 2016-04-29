@@ -2,6 +2,14 @@
 a light novel site for kindle.
 source: wenku8.
 
+## v0.0.9c
++ Fixed converter's tasklist issues.
++ Fixed converter's queue issue.
++ Fixed converter's callback issue.
++ Fixed converter's cover issue.
++ TODO: images from novel, child process management.
+
+
 ## v0.0.9b
 + Bugs fixed.
 

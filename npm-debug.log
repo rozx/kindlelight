@@ -8,7 +8,7 @@
 7 verbose unsafe-perm in lifecycle true
 8 info kindlelight@0.0.9 Failed to exec start script
 9 verbose stack Error: kindlelight@0.0.9 start: `sudo node ./main.js`
-9 verbose stack Exit status 1
+9 verbose stack Exit status 143
 9 verbose stack     at EventEmitter.<anonymous> (/usr/lib/node_modules/npm/lib/utils/lifecycle.js:217:16)
 9 verbose stack     at emitTwo (events.js:87:13)
 9 verbose stack     at EventEmitter.emit (events.js:172:7)
@@ -25,7 +25,7 @@
 15 error npm  v2.15.1
 16 error code ELIFECYCLE
 17 error kindlelight@0.0.9 start: `sudo node ./main.js`
-17 error Exit status 1
+17 error Exit status 143
 18 error Failed at the kindlelight@0.0.9 start script 'sudo node ./main.js'.
 18 error This is most likely a problem with the kindlelight package,
 18 error not with npm itself.
