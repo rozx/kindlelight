@@ -74,20 +74,21 @@ var converter = function () {
 						author : taskList[0].bookInfo.author,
 						publisher : taskList[0].bookInfo.publisher,
 						cover : coverPath,
-						content : []
+						appendChapterTitles : false,
+						content : [],
+						description : taskList[0].bookInfo.desc,
 					};
 
 					console.log('Converter > Finished init epub generate options.');
-					
+
 					// add title page
-					
+
 					var chapter = {
-							title : taskList[0].bookInfo.title,
-							data : '<div><img src ="file://./' + coverPath +  '"></img><h2>' + taskList[0].bookInfo.chapters[taskList[0].cid].title + '<h2></div>'
-						};
+						title : taskList[0].bookInfo.title,
+						data : '<div><img src ="file://./' + coverPath + '"></img><h2>' + taskList[0].bookInfo.chapters[taskList[0].cid].title + '</h2><hr><br><h2>内容简介</h2><hr><br>' + taskList[0].bookInfo.desc + '</div>'
+					};
 
 					option.content.push(chapter);
-					
 
 					// add chapters
 
@@ -95,13 +96,20 @@ var converter = function () {
 
 						var chapter = {
 							title : element.title,
-							data : '<div><br>' + element.content + '</div>'
+							data : '<div><br><h2>' + element.title + '</h2><br><hr><br>' + element.content + '</div>'
 						};
 
 						option.content.push(chapter);
 
 						console.log('Converter > Added chapter', element.title);
 					});
+
+					var chapter = {
+						title : 'Kindle Light',
+						data : '<div>本图书由Kindle Light 在线生成工具自动生成的哦！看更多的Kindle轻小说，请来: <a href= "http://rozx.tech"></a><br><hr> <img src="file://./public/under.jpg"></img> </div>'
+					};
+
+					option.content.push(chapter);
 
 					// start converting
 
@@ -110,18 +118,21 @@ var converter = function () {
 						if (!err) {
 
 							new epub(option, epubPath).promise.then(function () {
-								
+
 								console.log("Converter > Ebook Generated Successfully!");
-								
+
+								// start convert the book to .mobi
+
+								// sudo ./bin/kindlegen/kindlegen -c2 ./data/books/1657/epub/57218.epub -o 57218.mobi
+
 								taskList[0].callback(err, null);
 
 								self.remove(0);
-								
+
 								// keep convert
 
 								self.convertBook();
-								
-								
+
 							}, function (err) {
 
 								console.error("Converter > Failed to generate Ebook because of ", err);
@@ -155,7 +166,6 @@ var converter = function () {
 						}
 
 					})
-
 
 				} else {
 
@@ -212,7 +222,7 @@ var converter = function () {
 				book.forEach(function (element, index, array) {
 
 					var ctitle = element.substr(1, element.indexOf('\r\n', 1)).replace('\r', '');
-					var cdata = element.substr(element.indexOf('\r\n', 1), element.length).replace(/(\r\n|\n|\r)/g,'<br>');
+					var cdata = element.substr(element.indexOf('\r\n', 1), element.length).replace(/(\r\n|\n|\r)/g, '<br>');
 
 					chapters.push({
 						id : index,

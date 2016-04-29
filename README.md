@@ -2,6 +2,13 @@
 a light novel site for kindle.
 source: wenku8.
 
+## 0.0.8b
++ Minor bugs fixed.
++ Add ending page.
++ Tested .mobi file.
++ Next: convert to .mobi within the program.
+
+
 ## v0.0.8
 + Converter is now working(60%)
 + Next: Convert epud to mobi.
