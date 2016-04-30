@@ -13,12 +13,16 @@ var books = function () {
 
     // modules
     var downloader, wenku;
-
-    // init collections
-
-    bookList = db.collection('books');
-
     // functions
+
+    this.Init = function (d,w) {
+
+        downloader = d;
+        wenku = w;
+
+        bookList = db.collection('books');
+    }
+
 
     this.updateBookList = function(bookInfo, callback) {
 

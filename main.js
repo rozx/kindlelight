@@ -294,8 +294,9 @@ function Init() {
     conv.init();
 
     // set books
-    books.downloader = downloader;
-    books.wenku = wenku;
+    books.init(downloader, wenku);
+
+    console.log(books.bookList);
 
     //repeat(TimedJobs).every(5, 'min').start.in(60, 'sec');
 
