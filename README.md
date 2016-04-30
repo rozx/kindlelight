@@ -2,6 +2,10 @@
 a light novel site for kindle.
 source: wenku8.
 
+## V0.1a
++ Bugs fixed.
++ Now it is able to download images to local.
+
 ## V0.1
 + Fixed lot's of bugs.
 + Now able to get images.

@@ -110,7 +110,9 @@ var converter = function() {
 
                         // if there is a cover for chapter exist
 
-                        var coverPath = taskList[0].bookInfo.chapters[taskList[0].cid].cover;
+                        var coverPath = taskList[0].bookInfo.chapters[taskList[0].cid].images[0];
+
+                        if (coverPath.startsWith('./')) coverPath = 'file://./' + coverPath;
 
                     } else {
 
@@ -150,12 +152,21 @@ var converter = function() {
 
                             // if the chapter is image chapter
 
+                            console.log('Converter > Adding images to the book.');
+
                             var images = taskList[0].bookInfo.chapters[taskList[0].cid].images;
                             var data = '<div><br><h2>' + element.title + '</h2><br><hr><br>';
 
                             images.forEach(function (element, index, array) {
 
-                                data += '<img src="' + element + '"><br>';
+                                if (element.startsWith('./')) {
+
+                                    data += '<img src=file://"' + element + '"><br>';
+                                } else {
+
+                                    data += '<img src="' + element + '"><br>';
+                                }
+
 
                             });
 
@@ -164,7 +175,7 @@ var converter = function() {
                             chapter = {
 
                                 title: element.title,
-                                data: '<div><br><h2>' + element.title + '</h2><br><hr><br>' + element.content + '</div>'
+                                data: data
 
                             };
 

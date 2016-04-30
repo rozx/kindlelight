@@ -168,10 +168,14 @@ var books = function () {
 
                                     // get images
 
-                                    wenku.getImages(bookInfo, function (err,cid,bookInfo) {
+                                    wenku.getImages(bookInfo, function (err,cid,bookInfo,images) {
 
-                                        // update cover
-                                        self.updateBookList(bookInfo, bookList);
+                                        // save images to local
+                                        self.saveImages(cid, images, bookInfo, function (err,bookInfo) {
+
+                                            // update cover
+                                            if(!err) self.updateBookList(bookInfo, bookList);
+                                        });
 
 
                                     });
@@ -207,10 +211,15 @@ var books = function () {
 
                     // if image didn't check before
 
-                    wenku.getImages(bookInfo, function (err, cid, bookInfo) {
+                    wenku.getImages(bookInfo, function (err, cid, bookInfo, images) {
 
-                        // update cover
-                        if (!err) self.updateBookList(bookInfo, bookList);
+                        // save images to local
+                        self.saveImages(cid, images, bookInfo, function (err, bookInfo) {
+
+                            // update cover
+                            if(!err) self.updateBookList(bookInfo, bookList);
+
+                        });
 
                     });
 
@@ -260,6 +269,39 @@ var books = function () {
 
                 callback(data);
             }
+
+        });
+
+    }
+
+
+    this.saveImages = function (cid,images,bookInfo,callback) {
+
+        vid = bookInfo.chapters[cid].vid;
+
+        images.forEach(function (element, index, array) {
+
+            // ask downloader to download image
+
+            var localDir = bookDir + bookInfo.id + '/images/' + bookInfo.chapters[cid].vid + '/' +index + '.jpg';
+
+            downloader.queue({
+                url: element,
+                dir: localDir,
+                encoding: 'binary',
+                callback: function () {
+
+                    bookInfo.chapters[cid].images[index] = localDir;
+                    
+
+                    // call back
+
+                    if (callback) callback(null,bookInfo);
+
+                }
+            });
+
+
 
         });
 

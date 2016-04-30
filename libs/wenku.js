@@ -301,7 +301,7 @@ function wenku() {
 
                             //console.log('Wenku > Found images at chapters: ', chapterId + 1);
 
-                            self.getImage(chapterId, bookInfo, iUrl, function (err,cid,bookInfo) {
+                            self.getImage(chapterId, bookInfo, iUrl, function (err,cid,bookInfo, images) {
 
                                 if (!err) {
 
@@ -316,7 +316,7 @@ function wenku() {
 
                                         // callback
 
-                                        callback(null, cid, bookInfo)
+                                        callback(null, cid, bookInfo,images)
 
 
                                     };
@@ -393,7 +393,7 @@ function wenku() {
                         bookInfo.chapters[cid].cover = cover;
                         bookInfo.chapters[cid].images = images;
 
-                        if (callback) callback(null, cid, bookInfo);
+                        if (callback) callback(null, cid, bookInfo,images);
 
 
 
