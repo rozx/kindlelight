@@ -1,12 +1,13 @@
 ﻿
+var db = require('./db.js');
+var fs = require('fs-extra');
+var rq = require('request');
 
 
 var books = function () {
 
     var self = this;
 
-    var db = require('./db.js');
-    var fs = require('fs-extra');
 
     var bookList;
 
