@@ -301,9 +301,10 @@ app.get('/convert/:bid/:cid',function(req,res,next){
 				res.end();
             
             } else {
-            
+
+
 				res.status(404);
-				res.send('File not available.');
+                res.send(err);
             }
        
        });
