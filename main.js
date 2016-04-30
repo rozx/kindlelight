@@ -298,7 +298,7 @@ app.get('/convert/:bid/:cid',function(req,res,next){
        
 
             if(!err){
-				res.send(option);
+				res.end();
             
             } else {
             
