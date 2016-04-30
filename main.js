@@ -120,7 +120,7 @@ app.param('id', function(req, res, next, id) {
         if (!jar) {
 
             jar = wenku.jar;
-            books.downloader.jar = jar;
+            downloader.jar = jar;
 
             rq = rq.defaults({
                 jar: jar
@@ -133,7 +133,7 @@ app.param('id', function(req, res, next, id) {
         console.log('> Can not get book id:' + id);
         res.send('Can not get book id:' + id);
 
-        books.wenku.login(wenku.username, wenku.password);
+        wenku.login(wenku.username, wenku.password);
     }
 
 });
@@ -147,7 +147,7 @@ app.get('/book/cover/:id', function(req, res) {
     books.getBookById(bid, function(bookInfo) {
 
 
-        GetCover(bookInfo, function(data) {
+        books.getCover(bookInfo, function(data) {
 
             res.writeHead(200, {
                 'Content-Type': 'image/jpg'

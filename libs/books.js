@@ -116,7 +116,7 @@ var books = function () {
 
         var bookInfo;
 
-        getBookById(bid, function (doc) {
+        self.getBookById(bid, function (doc) {
 
             bookInfo = doc;
 
@@ -154,7 +154,7 @@ var books = function () {
 
                                     // save info
 
-                                    UpdateBookList(bookInfo);
+                                    self.updateBookList(bookInfo);
 
                                     // callback
 
