@@ -41,6 +41,10 @@ var converter = function() {
 
 
             if (!err) {
+
+                // no error opening the file
+
+
                 console.log('Converter > Queued task:', bookInfo.title, bookInfo.chapters[cid].title);
 
                 taskList.push({
@@ -95,7 +99,7 @@ var converter = function() {
             self.readBook(taskList[0].cid, taskList[0].bookInfo, function(err, c) {
 
                 if (!err) {
-                    // no err, start converting
+                    // no err parse the book, start converting
                     console.log('Converter > Start converting!');
 
                     // start generating epub
@@ -140,7 +144,7 @@ var converter = function() {
 
                     var chapter = {
                         title: 'Kindle Light',
-                        data: '<div>本图书由Kindle Light 在线生成工具自动生成的哦！看更多的Kindle轻小说，请来: <a href= "http://rozx.tech">Kindle Light!</a><br><hr> <img src="file://./public/under.jpg"></img> </div>'
+                        data: '<div>本图书由Kindle Light 在线生成工具自动生成的哦！看更多的Kindle轻小说，请来: <a href= "http://kindlelight.mobi">Kindle Light!</a><br><hr> <img src="file://./public/under.jpg"></img> </div>'
                     };
 
                     option.content.push(chapter);
@@ -150,6 +154,8 @@ var converter = function() {
                     fs.ensureDir(vPath + "/epub/", function(err) {
 
                         if (!err) {
+
+                            // no error ensure the dir : /epub/
 
                             new epub(option, epubPath).promise.then(function() {
 
@@ -163,6 +169,8 @@ var converter = function() {
 
                                     if (!err) {
 
+                                        // no error when ensuring the mobi dir
+
                                         //start converting
 
                                         console.log('Converter > Converting .epub to .mobi.');
@@ -171,17 +179,23 @@ var converter = function() {
                                         var mobiPath = vPath + "/mobi/" + taskList[0].bookInfo.chapters[taskList[0].cid].vid + '.mobi';
                                         var orimobiPath = vPath + "/epub/" + taskList[0].bookInfo.chapters[taskList[0].cid].vid + '.mobi';
 
+
+                                        // start converting , from epub to mobi
+
                                         kg.convert(epubPath, function(err, out) {
 
 
                                             fs.move(orimobiPath, mobiPath, {
-                                                clobber: true
+                                                clobber: true // set overwrite
                                             }, function(err) {
 
                                                 if (!err) {
+                                                    // no err moving the file
 
                                                     console.log('Converter > Convert successful! File:', mobiPath);
                                                 } else {
+
+                                                    // err moving the file
 
                                                     console.log('Converter > Error moving the file! File:', mobiPath);
 
@@ -209,7 +223,9 @@ var converter = function() {
 
 
 
-                            }, function(err) {
+                            }, function (err) {
+
+                                // err when converting to epub
 
                                 console.error("Converter > Failed to generate Ebook because of ", err);
 
@@ -228,6 +244,8 @@ var converter = function() {
 
                         } else {
 
+                            // error when ensure /epub/ dir
+
                             taskList[0].callback(err, null);
 
                             // err
@@ -245,6 +263,8 @@ var converter = function() {
                     })
 
                 } else {
+
+                    // Error parse the book
 
                     taskList[0].callback(err, null);
 

@@ -1,0 +1,152 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+        <SchemaVersion>2.0</SchemaVersion>
+        <ProjectGuid>{fc8481a9-bb98-48f8-b1e0-5fc89f870617}</ProjectGuid>
+        <ProjectHome />
+        <ProjectView>ShowAllFiles</ProjectView>
+        <StartupFile>main.js</StartupFile>
+        <WorkingDirectory>.</WorkingDirectory>
+        <OutputPath>.</OutputPath>
+        <ProjectTypeGuids>{3AF33F2E-1136-4D97-BBB7-1795711AC8B8};{349c5851-65df-11da-9384-00065b846f21};{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}</ProjectTypeGuids>
+        <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">11.0</VisualStudioVersion>
+        <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)' == 'Debug'" />
+    <PropertyGroup Condition="'$(Configuration)' == 'Release'" />
+    <ItemGroup>
+        <Content Include="notes.txt" />
+        <Content Include="package.json" />
+        <Content Include="README.md" />
+        <Compile Include="main.js" />
+        <Compile Include="libs\converter.js" />
+        <Compile Include="libs\db.js" />
+        <Compile Include="libs\downloader.js" />
+        <Compile Include="libs\kindlegen.js" />
+        <Compile Include="libs\wenku.js" />
+        <Content Include="public\under.jpg" />
+        <Content Include="public\favicon.ico" />
+        <Compile Include="routes\index.js" />
+        <Compile Include="routes\users.js" />
+        <Content Include="views\index.jade" />
+        <Content Include="data\tasks\converter.task" />
+        <Content Include="data\tasks\downloader.task" />
+        <Content Include="data\books\1\image.jpg" />
+        <Content Include="data\books\1234\image.jpg" />
+        <Content Include="data\books\1314\image.jpg" />
+        <Content Include="data\books\1657\image.jpg" />
+        <Content Include="data\books\1688\image.jpg" />
+        <Content Include="data\books\1727\image.jpg" />
+        <Content Include="data\books\1999\image.jpg" />
+        <Content Include="data\books\2000\image.jpg" />
+        <Content Include="data\books\2007\image.jpg" />
+        <Content Include="data\books\2008\image.jpg" />
+        <Content Include="data\books\2009\image.jpg" />
+        <Content Include="data\books\1\txt\1.txt" />
+        <Content Include="data\books\1024\txt\29979.txt" />
+        <Content Include="data\books\1234\txt\38255.txt" />
+        <Content Include="data\books\1657\txt\56211.txt" />
+        <Content Include="data\books\1657\txt\56238.txt" />
+        <Content Include="data\books\1657\txt\57218.txt" />
+        <Content Include="data\books\1657\txt\58183.txt" />
+        <Content Include="data\books\1657\txt\59235.txt" />
+        <Content Include="data\books\1688\txt\57323.txt" />
+        <Content Include="data\books\1727\txt\58857.txt" />
+        <Content Include="data\books\1727\txt\58984.txt" />
+        <Content Include="data\books\1727\txt\59452.txt" />
+        <Content Include="data\books\2007\txt\71125.txt" />
+        <Content Include="data\books\2008\txt\71138.txt" />
+        <Content Include="data\books\2009\txt\71151.txt" />
+        <Content Include="public\stylesheets\style.css" />
+    </ItemGroup>
+    <ItemGroup>
+        <Folder Include="data" />
+        <Folder Include="data\books" />
+        <Folder Include="data\books\1" />
+        <Folder Include="data\books\1\epub" />
+        <Folder Include="data\books\1\mobi" />
+        <Folder Include="data\books\1\txt" />
+        <Folder Include="data\books\1024" />
+        <Folder Include="data\books\1024\txt" />
+        <Folder Include="data\books\1234" />
+        <Folder Include="data\books\1234\txt" />
+        <Folder Include="data\books\1314" />
+        <Folder Include="data\books\1657" />
+        <Folder Include="data\books\1657\epub" />
+        <Folder Include="data\books\1657\mobi" />
+        <Folder Include="data\books\1657\txt" />
+        <Folder Include="data\books\1688" />
+        <Folder Include="data\books\1688\epub" />
+        <Folder Include="data\books\1688\txt" />
+        <Folder Include="data\books\1727" />
+        <Folder Include="data\books\1727\epub" />
+        <Folder Include="data\books\1727\txt" />
+        <Folder Include="data\books\1999" />
+        <Folder Include="data\books\2000" />
+        <Folder Include="data\books\2007" />
+        <Folder Include="data\books\2007\epub" />
+        <Folder Include="data\books\2007\mobi" />
+        <Folder Include="data\books\2007\txt" />
+        <Folder Include="data\books\2008" />
+        <Folder Include="data\books\2008\epub" />
+        <Folder Include="data\books\2008\mobi" />
+        <Folder Include="data\books\2008\txt" />
+        <Folder Include="data\books\2009" />
+        <Folder Include="data\books\2009\epub" />
+        <Folder Include="data\books\2009\mobi" />
+        <Folder Include="data\books\2009\txt" />
+        <Folder Include="data\cookies" />
+        <Folder Include="data\database" />
+        <Folder Include="data\tasks" />
+        <Folder Include="libs" />
+        <Folder Include="libs\kindlegen" />
+        <Folder Include="logs" />
+        <Folder Include="public" />
+        <Folder Include="public\stylesheets" />
+        <Folder Include="routes" />
+        <Folder Include="views" />
+    </ItemGroup>
+    <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+    <!--Do not delete the following Import Project.  While this appears to do nothing it is a marker for setting TypeScript properties before our import that depends on them.-->
+    <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.targets" Condition="False" />
+    <Import Project="$(VSToolsPath)\Node.js Tools\Microsoft.NodejsTools.targets" />
+    <ProjectExtensions>
+        <VisualStudio>
+          <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+            <WebProjectProperties>
+              <UseIIS>False</UseIIS>
+              <AutoAssignPort>True</AutoAssignPort>
+              <DevelopmentServerPort>0</DevelopmentServerPort>
+              <DevelopmentServerVPath>/</DevelopmentServerVPath>
+              <IISUrl>http://localhost:48022/</IISUrl>
+              <NTLMAuthentication>False</NTLMAuthentication>
+              <UseCustomServer>True</UseCustomServer>
+              <CustomServerUrl>http://localhost:1337</CustomServerUrl>
+              <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+            </WebProjectProperties>
+          </FlavorProperties>
+          <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}" User="">
+            <WebProjectProperties>
+              <StartPageUrl>
+              </StartPageUrl>
+              <StartAction>CurrentPage</StartAction>
+              <AspNetDebugging>True</AspNetDebugging>
+              <SilverlightDebugging>False</SilverlightDebugging>
+              <NativeDebugging>False</NativeDebugging>
+              <SQLDebugging>False</SQLDebugging>
+              <ExternalProgram>
+              </ExternalProgram>
+              <StartExternalURL>
+              </StartExternalURL>
+              <StartCmdLineArguments>
+              </StartCmdLineArguments>
+              <StartWorkingDirectory>
+              </StartWorkingDirectory>
+              <EnableENC>False</EnableENC>
+              <AlwaysStartWebServerOnDebug>False</AlwaysStartWebServerOnDebug>
+            </WebProjectProperties>
+          </FlavorProperties>
+        </VisualStudio>
+    </ProjectExtensions>
+</Project>
