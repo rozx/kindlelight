@@ -390,7 +390,7 @@ function wenku() {
 
                         // add images and cover to bookInfo
 
-                        bookInfo.chapters[cid].cover = cover;
+                        //bookInfo.chapters[cid].cover = cover;
                         bookInfo.chapters[cid].images = images;
 
                         if (callback) callback(null, cid, bookInfo,images);

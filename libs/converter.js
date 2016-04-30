@@ -2,7 +2,7 @@
 var fs = require('fs-extra');
 var epub = require('epub-gen');
 var kg = require('./kindlegen.js');
-var path = require('path');
+var pathF = require('path');
 
 var converter = function() {
 
@@ -113,7 +113,7 @@ var converter = function() {
 
                         var coverPath = taskList[0].bookInfo.chapters[taskList[0].cid].images[0];
 
-                        if (coverPath.startsWith('./')) coverPath = path.resolve(__dirname + '/../',coverPath);
+                        if (coverPath.startsWith('./')) coverPath = pathF.resolve(__dirname + '/../',coverPath);
 
                     } else {
 
@@ -138,7 +138,7 @@ var converter = function() {
 
                     var chapter = {
                         title: taskList[0].bookInfo.title,
-                        data: '<div><img src ="'+  coverPath + '"></img><h2>' + taskList[0].bookInfo.chapters[taskList[0].cid].title + '</h2><hr><br><h2>内容简介</h2><hr><br>' + taskList[0].bookInfo.desc + '</div>'
+                        data: '<div><img src ="' + 'file://' + coverPath + '"></img><h2>' + taskList[0].bookInfo.chapters[taskList[0].cid].title + '</h2><hr><br><h2>内容简介</h2><hr><br>' + taskList[0].bookInfo.desc + '</div>'
                     };
 
                     option.content.push(chapter);
@@ -162,7 +162,7 @@ var converter = function() {
 
                                 if (element.startsWith('./')) {
 
-                                    data += '<img src= "file://' + path.resolve(__dirname + '/../', element) + '"><br>';
+                                    data += '<img src= "file://' + pathF.resolve(__dirname + '/../', element) + '"><br>';
                                 } else {
 
                                     data += '<img src="' + element + '"><br>';
