@@ -284,27 +284,39 @@ app.get('/convert/:bid/:cid',function(req,res,next){
 
 
 
-app.get('/images/:id', function(req,res,next){
+app.get('/down/:format/:id/:cid', function(req,res,next){
 
     var bid = req.params.id;
+    var cid = req.params.cid;
+    var format = req.params.format;
 
+    
 
     books.getBookInfo(bid, bookList, function (bookInfo) {
 
         if (bookInfo) {
 
-            wenku.getImages(bookInfo, function (err) {
+            var file = 'data/books/' + bid + '/' + format + '/' + bookInfo.chapters[cid].vid + '.' + format;
 
-                res.end('Getting Images..');
+            // open file
+            fs.readFile(file, (err, data) => {
+                if (err) {
 
+                    res.send('Invalid file.');
+                } else {
+
+                    res.download(file);
+                }
             });
-
         } else {
 
-            res.end(new Error('No book info available!'));
-
+            res.send('Invalid file.');
         }
+
     });
+
+
+
     
 });
 
