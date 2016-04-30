@@ -282,6 +282,32 @@ app.get('/convert/:bid/:cid',function(req,res,next){
 
 });
 
+
+
+app.get('/images/:id', function(req,res,next){
+
+    var bid = req.params.id;
+
+
+    books.getBookInfo(bid, bookList, function (bookInfo) {
+
+        if (bookInfo) {
+
+            wenku.getImages(bookInfo, function (err) {
+
+                res.end('Getting Images..');
+
+            });
+
+        } else {
+
+            res.end(new Error('No book info available!'));
+
+        }
+    });
+    
+});
+
 app.use(function(req, res, next) {
 
     res.status(404);

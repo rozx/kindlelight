@@ -105,8 +105,20 @@ var converter = function() {
                     // start generating epub
                     var vPath = path + taskList[0].bookInfo.id;
                     var epubPath = vPath + "/epub/" + taskList[0].bookInfo.chapters[taskList[0].cid].vid + '.epub'
-                    var coverPath = vPath + '/image.jpg';
 
+                    if (taskList[0].bookInfo.chapters[taskList[0].cid].cover) {
+
+                        // if there is a cover for chapter exist
+
+                        var coverPath = taskList[0].bookInfo.chapters[taskList[0].cid].cover;
+
+                    } else {
+
+                        // else use the default cover image
+
+                        var coverPath = vPath + '/image.jpg';
+
+                    }
                     var option = {
                         title: taskList[0].bookInfo.title + ' ' + taskList[0].bookInfo.chapters[taskList[0].cid].title, // *Required, title of the book.
                         author: taskList[0].bookInfo.author,
@@ -130,12 +142,42 @@ var converter = function() {
 
                     // add chapters
 
-                    c.forEach(function(element, index, array) {
+                    c.forEach(function (element, index, array) {
 
-                        var chapter = {
-                            title: element.title,
-                            data: '<div><br><h2>' + element.title + '</h2><br><hr><br>' + element.content + '</div>'
-                        };
+                        var chapter;
+
+                        if (element.title.includes('插图')) {
+
+                            // if the chapter is image chapter
+
+                            var images = taskList[0].bookInfo.chapters[taskList[0].cid].images;
+                            var data = '<div><br><h2>' + element.title + '</h2><br><hr><br>';
+
+                            images.forEach(function (element, index, array) {
+
+                                data += '<img src="' + element + '"><br>';
+
+                            });
+
+                            data += element.content + '</div>';
+
+                            chapter = {
+
+                                title: element.title,
+                                data: '<div><br><h2>' + element.title + '</h2><br><hr><br>' + element.content + '</div>'
+
+                            };
+
+
+                        } else {
+
+                            // if it isnt image chapter
+
+                            chapter = {
+                                title: element.title,
+                                data: '<div><br><h2>' + element.title + '</h2><br><hr><br>' + element.content + '</div>'
+                            };
+                        }
 
                         option.content.push(chapter);
 

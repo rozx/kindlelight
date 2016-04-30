@@ -2,6 +2,13 @@
 a light novel site for kindle.
 source: wenku8.
 
+## V0.1
++ Fixed lot's of bugs.
++ Now able to get images.
++ Sepreate books function from main.js.
++ Lots lots lots changes...?
++ New Domain: <a href="http://kindlelight.mobi">http://kindlelight.mobi</a>
+
 ## v0.0.9c
 + Fixed converter's tasklist issues.
 + Fixed converter's queue issue.

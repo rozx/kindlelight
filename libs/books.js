@@ -124,8 +124,6 @@ var books = function () {
 
         self.getBookById(bid, bookList,function (doc) {
 
-            
-
             bookInfo = doc;
 
             if (!bookInfo) {
@@ -168,6 +166,16 @@ var books = function () {
 
                                     callback(bookInfo);
 
+                                    // get images
+
+                                    wenku.getImages(bookInfo, function (err,cid,bookInfo) {
+
+                                        // update cover
+                                        self.updateBookList(bookInfo, bookList);
+
+
+                                    });
+
                                 } else {
 
 
@@ -188,7 +196,26 @@ var books = function () {
 
             } else {
 
+             
+                // if bookInfo is already in data base!
+
                 callback(bookInfo);
+
+                // get images
+
+                if (!bookInfo.imagesChecked) {
+
+                    // if image didn't check before
+
+                    wenku.getImages(bookInfo, function (err, cid, bookInfo) {
+
+                        // update cover
+                        if (!err) self.updateBookList(bookInfo, bookList);
+
+                    });
+
+                }
+
             }
 
 
