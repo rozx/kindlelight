@@ -15,7 +15,7 @@ var books = function () {
     var downloader, wenku;
     // functions
 
-    this.Init = function (d,w) {
+    this.init = function (d,w) {
 
         downloader = d;
         wenku = w;
