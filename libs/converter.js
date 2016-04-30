@@ -2,6 +2,7 @@
 var fs = require('fs-extra');
 var epub = require('epub-gen');
 var kg = require('./kindlegen.js');
+var path = require('path');
 
 var converter = function() {
 
@@ -112,7 +113,7 @@ var converter = function() {
 
                         var coverPath = taskList[0].bookInfo.chapters[taskList[0].cid].images[0];
 
-                        if (coverPath.startsWith('./')) coverPath = coverPath.replace('./', '');
+                        if (coverPath.startsWith('./')) coverPath = path.resolve(__dirname + '/../',coverPath);
 
                     } else {
 
@@ -161,7 +162,7 @@ var converter = function() {
 
                                 if (element.startsWith('./')) {
 
-                                    data += '<img src= "file://' + element.replace('./', '') + '"><br>';
+                                    data += '<img src= "file://' + path.resolve(__dirname + '/../', element) + '"><br>';
                                 } else {
 
                                     data += '<img src="' + element + '"><br>';
