@@ -112,7 +112,7 @@ var converter = function() {
 
                         var coverPath = taskList[0].bookInfo.chapters[taskList[0].cid].images[0];
 
-                        if (coverPath.startsWith('./')) coverPath = 'file://./' + coverPath;
+                        if (coverPath.startsWith('./')) coverPath = 'file://' + coverPath;
 
                     } else {
 
