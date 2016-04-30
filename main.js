@@ -6,8 +6,9 @@ var express = require('express');
 var app = express();
 var port = 80;
 var jar;
-var bookDir = './data/books/';
-var bookFile = bookDir + 'bookList.json';
+
+//var bookFile = bookDir + 'bookList.json';
+var bookList;
 
 // init util
 var util = require('util');
@@ -144,7 +145,7 @@ app.get('/book/cover/:id', function(req, res) {
     
     console.log('> Cover requested:',bid);
 
-    books.getBookById(bid, function(bookInfo) {
+    books.getBookById(bid, bookList,function(bookInfo) {
 
 
         books.getCover(bookInfo, function(data) {
@@ -166,7 +167,8 @@ app.get('/book/:id', function(req, res, next) {
 
     console.log('> Bookinfo requested, id:', bid);
 
-    books.getBookInfo(bid, function(bi) {
+
+    books.getBookInfo(bid, bookList,function(bi) {
 
         bookInfo = bi;
         res.send('<img src="/book/cover/' + bid + '">' + '<br>' + JSON.stringify(bookInfo));
@@ -178,11 +180,11 @@ app.get('/read/:bid/', function(req, res, next) {
 
     var bid = req.params.bid;
 
-    books.getBookInfo(bid, function(bookInfo) {
+    books.getBookInfo(bid, bookList,function(bookInfo) {
 
         if (bookInfo) {
 
-            GetCover(bookInfo);
+            books.getCover(bookInfo);
             // if book exist
             res.send(bookInfo);
 
@@ -204,7 +206,7 @@ app.get('/read/:bid/:cid', function(req, res, next) {
     var bid = req.params.bid;
     var cid = req.params.cid;
 
-    books.getBookById(bid, function(bookInfo) {
+    books.getBookById(bid, bookList,function(bookInfo) {
 
         if (!cid) cid = 0;
 
@@ -222,7 +224,7 @@ app.get('/read/:bid/:cid', function(req, res, next) {
 
                 // also get cover
 
-                GetCover(bookInfo);
+                books.getCover(bookInfo);
 
                 //console.log(data);
                 res.send({data : data});
@@ -256,7 +258,7 @@ app.get('/convert/:bid/:cid',function(req,res,next){
     var cid = req.params.cid;
 
 
-    books.getBookById(bid,function(bookInfo){
+    books.getBookById(bid,bookList,function(bookInfo){
         
        console.log('> Start converting:',bookInfo.title);
         
@@ -294,10 +296,9 @@ function Init() {
     conv.init();
 
     // set books
-    books.init(downloader, wenku);
-
-    console.log(books.bookList);
-
+    bookList = db.collection('books');
+    books.init(downloader, wenku,bookList);
+    
     //repeat(TimedJobs).every(5, 'min').start.in(60, 'sec');
 
 }

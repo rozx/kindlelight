@@ -1,30 +1,26 @@
 ﻿
-var db = require('./db.js');
 var fs = require('fs-extra');
 var rq = require('request');
-
+var gbk = require('gbk');
 
 var books = function () {
 
     var self = this;
-
-
-    var bookList;
+    var bookDir = './data/books/';
 
     // modules
     var downloader, wenku;
     // functions
 
-    this.init = function (d,w) {
+    this.init = function (d,w,l) {
 
         downloader = d;
         wenku = w;
 
-        bookList = db.collection('books');
     }
 
 
-    this.updateBookList = function(bookInfo, callback) {
+    this.updateBookList = function(bookInfo, bookList,callback) {
 
         var cursor = bookList.find({
             'id': bookInfo.id
@@ -64,7 +60,8 @@ var books = function () {
 
 
 
-    this.getBookById = function(id, callback) {
+    this.getBookById = function (id, bookList, callback) {
+
 
         var cursor = bookList.find({
             'id': id
@@ -72,6 +69,8 @@ var books = function () {
 
         cursor.toArray(function (err, doc) {
 
+
+            if (err) console.log(err);
             if (doc) callback(doc[0]);
 
         });
@@ -80,7 +79,7 @@ var books = function () {
 
 
 
-    this.getCover = function(bookInfo, callback) {
+    this.getCover = function (bookInfo, callback) {
 
         fs.readFile(bookDir + bookInfo.id + '/' + 'image.jpg', function (err, data) {
 
@@ -119,11 +118,13 @@ var books = function () {
 
     }
 
-    this.getBookInfo = function(bid, callback) {
+    this.getBookInfo = function (bid, bookList,callback) {
 
         var bookInfo;
 
-        self.getBookById(bid, function (doc) {
+        self.getBookById(bid, bookList,function (doc) {
+
+            
 
             bookInfo = doc;
 
@@ -161,7 +162,7 @@ var books = function () {
 
                                     // save info
 
-                                    self.updateBookList(bookInfo);
+                                    self.updateBookList(bookInfo, bookList);
 
                                     // callback
 
@@ -197,7 +198,7 @@ var books = function () {
     }
 
 
-    this.getBook = function(cid, bookInfo, callback) {
+    this.getBook = function (cid, bookInfo,callback) {
 
 
         // check local
