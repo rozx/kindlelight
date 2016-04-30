@@ -3,6 +3,8 @@
 
 var books = function () {
 
+    var self = this;
+
     var db = require('./db.js');
     var fs = require('fs-extra');
 
