@@ -197,7 +197,7 @@ function wenku() {
     this.getBookInfo = function (html, bid) {
 
         // bookInfo = {_id: '1', title: 'God World', id : '1922', image : 'xxx',author: 'xxx',desc: 'xxxxxx',publisher: 'xxx',lastUpdate : 1231232131, listUrl : 'http://www.wenku8.com/novel/0/1922/index.htm'
-        //              chapters: [{ title : '1',cover: 'http://xxx.jpg', images: ['aaaa.jpg'],url: 'http://dl.wenku8.com/packtxt.php?aid=1922&vid=67426&charset=utf-8' }]}
+        //              chapters: [{ title : '1', images: ['aaaa.jpg'],url: 'http://dl.wenku8.com/packtxt.php?aid=1922&vid=67426&charset=utf-8' }]}
 
         var bookInfo = {};
         var url = self.url + '/book/' + bid + '.htm';
@@ -378,7 +378,7 @@ function wenku() {
                         var images = [];
 
                         // add cover for each chapter
-                        var cover = $('.divimage img').attr('src');
+                        //var cover = $('.divimage img').attr('src');
 
                         $('.divimage img').each(function (i, e) {
 

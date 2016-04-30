@@ -106,7 +106,7 @@ var converter = function() {
                     var vPath = path + taskList[0].bookInfo.id;
                     var epubPath = vPath + "/epub/" + taskList[0].bookInfo.chapters[taskList[0].cid].vid + '.epub'
 
-                    if (taskList[0].bookInfo.chapters[taskList[0].cid].cover) {
+                    if (taskList[0].bookInfo.chapters[taskList[0].cid].images[0]) {
 
                         // if there is a cover for chapter exist
 
@@ -161,7 +161,7 @@ var converter = function() {
 
                                 if (element.startsWith('./')) {
 
-                                    data += '<img src=file://"' + element + '"><br>';
+                                    data += '<img src= "file://' + element + '"><br>';
                                 } else {
 
                                     data += '<img src="' + element + '"><br>';
