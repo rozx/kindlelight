@@ -116,7 +116,7 @@ var converter = function() {
 
                         // else use the default cover image
 
-                        var coverPath = vPath + '/image.jpg';
+                        var coverPath = 'file://./' + vPath + '/image.jpg';
 
                     }
                     var option = {
@@ -135,7 +135,7 @@ var converter = function() {
 
                     var chapter = {
                         title: taskList[0].bookInfo.title,
-                        data: '<div><img src ="file://./' + coverPath + '"></img><h2>' + taskList[0].bookInfo.chapters[taskList[0].cid].title + '</h2><hr><br><h2>内容简介</h2><hr><br>' + taskList[0].bookInfo.desc + '</div>'
+                        data: '<div><img src ="'+  coverPath + '"></img><h2>' + taskList[0].bookInfo.chapters[taskList[0].cid].title + '</h2><hr><br><h2>内容简介</h2><hr><br>' + taskList[0].bookInfo.desc + '</div>'
                     };
 
                     option.content.push(chapter);
@@ -190,6 +190,8 @@ var converter = function() {
                     };
 
                     option.content.push(chapter);
+
+                    console.log('Converter > Chapters setup complete.');
 
                     // start converting
 

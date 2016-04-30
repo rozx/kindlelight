@@ -97,7 +97,7 @@ app.get('*', function(req, res, next) {
 
     if (req.headers.accept == "*/*") {
 
-        console.log('duplicate request!');
+        //console.log('duplicate request!');
         
         //console.log(req.headers);
 
