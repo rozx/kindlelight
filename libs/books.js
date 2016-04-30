@@ -275,7 +275,9 @@ var books = function () {
     }
 
 
-    this.saveImages = function (cid,images,bookInfo,callback) {
+    this.saveImages = function (cid, images, bookInfo, callback) {
+
+        if (!bookInfo) return null;
 
         vid = bookInfo.chapters[cid].vid;
 
