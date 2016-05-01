@@ -1,1 +1,2 @@
 D:\Project\KindleLight\bin\Microsoft.NodejsTools.WebRole.dll
+D:\Project\KindleLight\obj\Debug\KindleLight.njsprojResolveAssemblyReference.cache

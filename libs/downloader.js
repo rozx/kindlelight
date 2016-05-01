@@ -1,3 +1,8 @@
+// Downloader module V1.0
+// Mutithread version
+// Author: Rozx
+
+
 // required modules
 var rq = require('request');
 var fs = require('fs-extra');
@@ -9,19 +14,12 @@ function downloader() {
     var jar;
     var queueList = [];
     var taskFilePath = './data/tasks/downloader.task';
-    const READY = 0,
-        DOWNLOADING = 1,
-        WRITTING = 2,
-        ERROR = 3,
-        STOPPED = 4;
-    var status;
+    const READY = 0, RUNNING = 1; 
+    var maxThreads = 100;
+
 
 
     this.init = function(autoStart) {
-
-        status = READY;
-
-        if (autoStart) self.Start();
 
         // check if task exists
 
@@ -37,22 +35,26 @@ function downloader() {
 
                     queueList = packageObj;
 
+                    if (autoStart) self.start();
+
+                    // check if queueList is undefined
+                    if (queueList == undefined) queueList = [];
                 })
             }
         });
 
-        // check if queueList is undefined
+        
 
-        if (queueList == undefined) queueList = [];
+        
 
     }
 
 
     this.start = function() {
 
-        if (status == READY && queueList.length > 0) {
+        if (queueList.length > 0) {
 
-            self.download(0);
+            self.download();
 
         }
 
@@ -60,89 +62,143 @@ function downloader() {
 
     this.stop = function() {
 
-        status = STOPPED;
+        
+    }
+
+    this.currentThread = function () {
+
+        // return the num of total running download threads.
+
+        var threadNum = 0;
+
+        queueList.forEach(function (element, index, array) {
+
+            if (element.status == RUNNING) threadNum+=1;
+
+        });
+
+        return threadNum;
+
+
+    }
+
+
+    this.nextAvailableTask = function () {
+
+        var result = null;
+
+        queueList.forEach(function (e, i, a) {
+
+            if (e.status == READY) result = e;
+
+        });
+
+        return result;
+    }
+
+
+    this.isDuplicate = function (task) {
+
+        var result = false;
+
+
+        queueList.forEach(function (e, i, a) {
+
+            if (e == task) result = true;
+
+        });
+
+        return result;
+
     }
 
     this.queue = function(task) {
 
-        // task = {url : 'xxx.com/a.txt', dir : './data/book/1234/a.txt',encoding : 'utf8',callback : function}
 
+        // task = {url : 'xxx.com/a.txt', dir : './data/book/1234/a.txt',encoding : 'utf8',
+        // status = READY | RUNNING,
+        // callback: function, retried: 0}
+
+
+        // init task
         if (!task.url) return false;
 
         if (!queueList) queueList = [];
 
-        if (queueList.length == 0 && status == READY) {
+        if (!task.status) task.status = READY;
 
-            queueList.push(task);
+        if (!task.retried) task.retried = 0;
 
-            self.download(0);
+        // check if the task is in list already.
 
-            console.log('Downloader > New task queued and start downloading:', task.url);
+        if (self.isDuplicate(task)) return false;
 
+        // start downloads
+
+        queueList.push(task);
+
+
+        if (self.currentThread() < maxThreads) {
+
+            self.download();
+
+            console.log('Downloader > New task queued and start downloading:', task.url, '(' + self.currentThread() + '/', queueList.length + ')');
         } else {
 
-            queueList.push(task);
-
-            console.log('Downloader > New task queued :', task.url);
-
-            if (status == READY || status == STOPPED) self.start();
+            console.log('Downloader > New task queued :', task.url, '(' + self.currentThread() + '/', queueList.length + ')');
         }
 
         self.save();
 
     }
 
-    this.remove = function(id) {
+    this.remove = function (task,allowRetry) {
 
-        if (queueList[id]) {
+        var result = false;
 
-            delete(queueList[0]);
-            queueList.splice(0, 1);
+        queueList.forEach(function (e, i, a) {
+
+            if (e == task) {
+
+                if (e.retried > 3 || !allowRetry) {
+                    delete (queueList[i]);
+                    queueList.splice(i, 1);
+                } else {
+
+                    e.retried++;
+                    e.status = READY;
+                }
+
+                //self.save();
+                result = true;
+            }
+
+            
+
+        });
 
 
-
-            this.save();
-
-            return true;
-
-        } else {
-
-            return false;
-        }
+        self.save();
+        return result;
 
     }
 
 
-    this.download = function(index) {
+    this.download = function () {
 
-        if (status == READY) {
+        var task = self.nextAvailableTask();
 
+        if (self.currentThread() < maxThreads && task) {
 
-
-            // make sure it is at the begging of the list
-
-            if (index != 0) {
-
-                var item = queueList(index);
-
-                queueList.splice(index, 1);
-                queueList.unshift(item);
-
-            }
-
-
-            //console.log(queueList,status);
-            status = DOWNLOADING;
+            task.status = RUNNING;
 
             // start downloading
 
-            if (queueList[0].encoding == 'binary') {
+
+            console.log('Downloader > Downloading file..');
 
 
-                console.log('Downloader > Downloading binary file..');
-                // if it is binary file
-
-                fs.ensureFile(queueList[0].dir, function(err) {
+                fs.ensureFile(task.dir, function (err) {
 
                     if (!err) {
 
@@ -150,138 +206,52 @@ function downloader() {
                         // ensured path exists
 
                         rq
-                            .get(queueList[0].url)
-                            .on('response', function(response) {
+                            .get(task.url)
+                            .on('response', function (response) {
+
 
                                 if (response.statusCode != 200) {
 
-                                    console.log('Downloader > Error when downloading! Code:'.response.statusCode);
-                                    
-                                    self.remove(0);
-                                    status = READY;
-                                    self.start();
+                                    console.log('Downloader > Error when downloading! Code:'.response.statusCode, '(' + self.currentThread() + '/', queueList.length + ')');
+
+                                    if (task.callback) task.callback(new Error('Failed to connect to the server.'));
+
+                                    self.remove(task, true);
+                                    self.download();
 
                                 }
                             })
 
 
-                        .pipe(fs.createWriteStream(queueList[0].dir).on('close', function() {
-							
-                            // callback
-                            if (queueList[0].callback) queueList[0].callback();
+                            .pipe(fs.createWriteStream(task.dir).on('close', function () {
 
-                            console.log('Downloader > file saved to:', queueList[0].dir);
-                            self.remove(0);
-                            status = READY;
-                            self.start();
+                                // callback
+                                if (task.callback) task.callback();
 
-                        }));
+                                console.log('Downloader > file saved to:', task.dir, '(' + self.currentThread() + '/', queueList.length + ')');
+                                self.remove(task,false);
+                                self.download();
+
+                            }));
 
                     } else {
 
-                        console.log('Downloader > Error when downloading!');
+                        console.log('Downloader > Error when downloading!', '(' + self.currentThread() + '/', queueList.length + ')');
 
-                        self.remove(0);
-                        status = READY;
-                        self.start();
+                        if (task.callback) task.callback(new Error('Failed to ensure the file.'));
+
+
+                        self.remove(task, true);
+                        self.download();
                     }
-
-                })
-
-            } else {
-
-                // else 
-
-                var data;
-
-                var read = rq.get({
-                        url: queueList[0].url,
-                        jar: jar,
-                        encoding: queueList[0].encoding
-                    })
-                    .on('response', function(response) {
-
-                        console.log(response.statusCode) // 200
-
-                        if (response.statusCode == 200) {
-
-                            console.log('Downloader > Start downloading.');
-                        }
-
-
-                    })
-
-                .on('error', function(err) {
-
-
-                    console.log('Downloader > Error when downloading!');
-                    self.remove(0);
-                    status = READY;
-                    self.start();
-                })
-
-                .on('data', function(chunk) {
-
-                    data += chunk;
-
-                    //console.log(chunk.length);
-                })
-
-
-                .on('end', function() {
-
-                    console.log('Downloader > Finished download :', queueList[0].url);
-
-                    // callback
-                    if (queueList[0].callback) queueList[0].callback(data);
-
-
-                    // write file
-
-                    if (queueList[0].dir) {
-
-                        fs.outputFile(queueList[0].dir, data, (err) => {
-
-                            if (!err) {
-
-                                console.log('Downloader > file saved.');
-
-                            } else {
-
-                                console.log('Downloader >', err);
-
-                            }
-
-                        });
-
-                    }
-
-
-                    self.remove(0);
-                    status = READY;
-                    self.start();
 
                 });
-
-
-            }
-
-
-
-
-        } else {
-
-            // if it is busy, add the task at the second position
-
-            var item = queue(index);
-            queueList.splice(index, 1);
-            queueList.splice(1, 0, item);
 
         }
 
 
 
-        return 0;
+        return null;
     }
 
     this.save = function() {

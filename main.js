@@ -147,14 +147,23 @@ app.get('/book/cover/:id', function(req, res) {
 
     books.getBookById(bid, bookList,function(bookInfo) {
 
+        if (bookInfo) {
 
-        books.getCover(bookInfo, function(data) {
+            books.getCover(bookInfo, function (err, data) {
 
-            res.writeHead(200, {
-                'Content-Type': 'image/jpg'
+                if (!err) {
+
+                    res.writeHead(200, {
+                        'Content-Type': 'image/jpg'
+                    });
+                    res.end(data, 'binary');
+
+                } else {
+
+                    res.end();
+                }
             });
-            res.end(data, 'binary');
-        });
+        }
     });
 
 });

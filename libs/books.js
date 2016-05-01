@@ -22,6 +22,10 @@ var books = function () {
 
     this.updateBookList = function(bookInfo, bookList,callback) {
 
+        //if record is null
+
+        if (bookInfo.title == (undefined || null || '')) return false;
+
         var cursor = bookList.find({
             'id': bookInfo.id
         });
@@ -91,15 +95,25 @@ var books = function () {
                     url: bookInfo.image,
                     dir: bookDir + bookInfo.id + '/' + 'image.jpg',
                     encoding: 'binary',
-                    callback: function (data) {
+                    callback: function (err) {
 
                         // call back
 
-                        fs.readFile(bookDir + bookInfo.id + '/' + 'image.jpg', function (err, data) {
+                        if (!err) {
 
-                            if (!err && callback) callback(data);
+                            fs.readFile(bookDir + bookInfo.id + '/' + 'image.jpg', function (err, data) {
 
-                        });
+                                // no error to open the file
+
+                                if (!err && callback) callback(null,data);
+
+                            });
+                        } else {
+
+                            // error to download the file
+
+                            if (callback) callback(err,null);
+                        }
 
                     }
                 });
@@ -109,7 +123,7 @@ var books = function () {
 
                 // file exists
 
-                if (callback) callback(data);
+                if (callback) callback(null,data);
 
             }
 

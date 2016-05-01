@@ -2,9 +2,17 @@
 a light novel site for kindle.
 source: wenku8.
 
+
+## V0.1.1
++ Reworte downloader, now muti-threads enabled.
++ Add duplicate check for converter.
++ Bugs fixed.
+
 ## V0.1a
 + Bugs fixed.
 + Now it is able to download images to local.
++ Able to download files.
++ Next: muti-thread download, frontend.
 
 ## V0.1
 + Fixed lot's of bugs.

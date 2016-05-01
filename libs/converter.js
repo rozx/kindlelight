@@ -36,7 +36,33 @@ var converter = function() {
         });
     };
 
-    this.queue = function(cid, bookInfo, callback) {
+    this.isDuplicate = function (task) {
+
+        var result = false;
+
+        taskList.forEach(function (e, i, a) {
+
+            if (e == task) result = true;
+
+        });
+
+        return result;
+
+    }
+
+
+    this.queue = function (cid, bookInfo, callback) {
+
+        // check duplicate
+
+        var task = {
+            cid: cid,
+            bookInfo: bookInfo,
+            callback: callback
+        };
+
+        if (self.isDuplicate(task)) return false;
+
 
         fs.access('data/books/' + bookInfo.id + '/txt/' + bookInfo.chapters[cid].vid + '.txt', fs.R_OK | fs.W_OK, (err) => {
 
@@ -48,11 +74,7 @@ var converter = function() {
 
                 console.log('Converter > Queued task:', bookInfo.title, bookInfo.chapters[cid].title);
 
-                taskList.push({
-                    cid: cid,
-                    bookInfo: bookInfo,
-                    callback: callback
-                });
+                taskList.push();
 
 
                 self.saveTask();
@@ -74,6 +96,8 @@ var converter = function() {
         });
 
         //self.convertBook();
+
+        return true;
     }
 
     this.convertBook = function() {
