@@ -61,7 +61,11 @@ var converter = function() {
             callback: callback
         };
 
-        if (self.isDuplicate(task)) return false;
+        if (self.isDuplicate(task)) {
+
+            if (callback) callback(new Error('task is already in the list'));
+            return false;
+        }
 
 
         fs.access('data/books/' + bookInfo.id + '/txt/' + bookInfo.chapters[cid].vid + '.txt', fs.R_OK | fs.W_OK, (err) => {
