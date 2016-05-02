@@ -9,8 +9,12 @@ var converter = function() {
     var self = this;
     var path = 'data/books/';
     var taskPath = 'data/tasks/converter.task';
+    var tempEpudPath = 'data/node_modules/epub_gen/tempDir';
+    var tempCleanCount = 0;  // clean temp dir if count > 3
+    var maxTempCleanCount = 0;
     var taskList = [];
     var status;
+
     const READY = 0,
         WORKING = 1;
 
@@ -42,7 +46,7 @@ var converter = function() {
 
         taskList.forEach(function (e, i, a) {
 
-            if (e == task) result = true;
+            if (e.cid == task.cid && e.bookInfo.id == task.bookInfo.id) result = true;
 
         });
 
@@ -51,15 +55,35 @@ var converter = function() {
     }
 
 
+    this.valid = function (task) {
+
+        // check if the book was converted within 1 day
+
+        var result = false;
+
+        var one_hour = 1000 * 60 * 60;
+
+        var lastConvert = task.bookInfo.chapters[task.cid].lastConvert;
+        var diff = ((Date.now() - lastConvert) / one_hour).toFixed(0);
+
+        if (!lastConvert || lastConvert == 0 || diff >= 20) result = true;
+
+        return result;
+
+    }
+
+
     this.queue = function (cid, bookInfo, callback) {
 
-        // check duplicate
+        
 
         var task = {
             cid: cid,
             bookInfo: bookInfo,
             callback: callback
         };
+
+        // check duplicate
 
         if (self.isDuplicate(task)) {
 
@@ -69,6 +93,18 @@ var converter = function() {
 
             return false;
         }
+
+        // check if the book is updated within 1 day.
+
+        if (!self.valid(task)) {
+
+            if (callback) callback(new Error('Task has been converted within 1 day.'));
+
+            console.log('Converter > Task has been converted within 1 day.');
+
+            return false;
+        }
+        
 
 
         fs.access('data/books/' + bookInfo.id + '/txt/' + bookInfo.chapters[cid].vid + '.txt', fs.R_OK | fs.W_OK, (err) => {
@@ -268,6 +304,22 @@ var converter = function() {
                                 fs.ensureDir(vPath + '/mobi/', function(err) {
 
                                     if (!err) {
+
+                                        // empty the temp files
+
+                                        if (tempCleanCount >= maxTempCleanCount) {
+
+                                            fs.emptyDir(tempEpudPath, function (err) {
+                                                if (!err) console.log('Converter > Clean temp file successful!')
+                                            });
+
+                                            tempCleanCount = 0;
+
+                                        } else {
+
+
+                                            tempCleanCount ++;
+                                        }
 
                                         // no error when ensuring the mobi dir
 

@@ -274,7 +274,14 @@ app.get('/convert/:bid/:cid',function(req,res,next){
        conv.queue(cid,bookInfo,function(err,option){
        
 
-            if(!err){
+           if (!err) {
+
+                // update the time of last convert time
+
+                bookInfo.chapters[cid].lastConvert = Date.now();
+
+                books.updateBookList(bookInfo, bookList);
+
 				res.end();
             
             } else {
