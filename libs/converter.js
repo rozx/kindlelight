@@ -81,7 +81,7 @@ var converter = function() {
 
                 console.log('Converter > Queued task:', bookInfo.title, bookInfo.chapters[cid].title);
 
-                taskList.push();
+                taskList.push(task);
 
 
                 self.saveTask();
@@ -107,10 +107,23 @@ var converter = function() {
         return true;
     }
 
-    this.convertBook = function() {
+    this.convertBook = function () {
+
 
         // check status
-        if (status == READY && taskList.length > 0 && taskList[0].bookInfo) {
+        if (status == READY && taskList.length > 0) {
+
+            if (!taskList[0].bookInfo) {
+
+                taskList[0].callback(new Error('bookInfo is empty'), null);
+
+                // if no bookinfo, remove then return.
+                self.remove(0);
+
+                // after converted to mobi, keep convert
+                self.convertBook();
+
+            }
             
             // set status to busy
 
