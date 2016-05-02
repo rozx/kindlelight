@@ -64,6 +64,9 @@ var converter = function() {
         if (self.isDuplicate(task)) {
 
             if (callback) callback(new Error('task is already in the list'));
+
+            console.log('Converter > Task is already in the list!');
+
             return false;
         }
 
