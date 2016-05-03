@@ -51,6 +51,7 @@
     <Folder Include="typings\cheerio\" />
     <Folder Include="typings\cookie-parser\" />
     <Folder Include="typings\debug\" />
+    <Folder Include="typings\ejs\" />
     <Folder Include="typings\express-serve-static-core\" />
     <Folder Include="typings\express\" />
     <Folder Include="typings\form-data\" />
@@ -77,6 +78,7 @@
     <TypeScriptCompile Include="typings\debug\debug.d.ts" />
     <TypeScriptCompile Include="typings\debug\debug.d.ts" />
     <TypeScriptCompile Include="typings\debug\debug.d.ts" />
+    <TypeScriptCompile Include="typings\ejs\ejs.d.ts" />
     <TypeScriptCompile Include="typings\express-serve-static-core\express-serve-static-core.d.ts" />
     <TypeScriptCompile Include="typings\express-serve-static-core\express-serve-static-core.d.ts" />
     <TypeScriptCompile Include="typings\express-serve-static-core\express-serve-static-core.d.ts" />

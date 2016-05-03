@@ -11,7 +11,7 @@ var converter = function() {
     var taskPath = 'data/tasks/converter.task';
     var tempEpudPath = 'data/node_modules/epub_gen/tempDir';
     var tempCleanCount = 0;  // clean temp dir if count > 3
-    var maxTempCleanCount = 0;
+    var maxTempCleanCount = 5;
     var taskList = [];
     var status;
 

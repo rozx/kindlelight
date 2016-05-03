@@ -56,10 +56,11 @@ console.log("> initialized.");
 
 // app config
 
-app.set('view engine', 'jade');
+app.set('view engine', 'ejs');
 app.use(express.static('public'));
 //app.use(express.static('./data/books'));
 app.use(favicon(__dirname + '/public/favicon.ico'));
+app.set('views', __dirname + '/views');
 
 // listening to port
 
@@ -83,12 +84,10 @@ Init();
 
 // index
 
-app.get('/', function(req, res) {
+app.get('/', function (req, res) {
 
-    res.render('index', {
-        title: 'Kindle Light Novel',
-        message: 'hello world!'
-    });
+    res.render('Index/index');
+
 });
 
 app.get('*', function(req, res, next) {
@@ -336,10 +335,14 @@ app.get('/down/:format/:id/:cid', function(req,res,next){
     
 });
 
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
+
+
+    
 
     res.status(404);
-    res.send('Invalid URL');
+    res.render('Error/404');
+    //res.send('Invalid URL');
 
 });
 

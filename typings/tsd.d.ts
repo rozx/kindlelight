@@ -13,3 +13,4 @@
 /// <reference path="request/request.d.ts" />
 /// <reference path="serve-favicon/serve-favicon.d.ts" />
 /// <reference path="serve-static/serve-static.d.ts" />
+/// <reference path="ejs/ejs.d.ts" />
