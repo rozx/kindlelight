@@ -174,16 +174,16 @@ div.wrapper h1, div.wrapper h2, div.wrapper h3, div.wrapper h4, div.wrapper h5, 
 #gallery li{
 	display:block;
 	float:left;
-	width:310px;
-	height:170px;
-	margin:0 15px 15px 0;
+	width:210px;
+	height:310px;
+	margin:0 30px 100px 0;
 	}
 
 #gallery li a{
 	display:block;
 	float:left;
-	width:300px;
-	height:160px;
+	width:200px;
+	height:300px;
 	margin:0;
 	padding:4px;
 	border:1px dotted #333333;

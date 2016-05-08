@@ -324,6 +324,61 @@ var books = function () {
     }
 
 
+    this.getRecentBooks = function (num, bookList, callback) {
+
+
+        // get latest updated novels
+
+        if (num <= 0) return false;
+
+        var cursor = bookList.find().sort({ lastUpdate: -1 }).limit(num).toArray(function (err, doc) {
+
+            if (!err) {
+
+                if (callback) callback(null, doc);
+
+            } else {
+
+                if (callback) callback(err, null);
+
+            }
+
+
+        });
+
+
+
+    }
+
+
+    this.getHotBooks = function (num, bookList, callback) {
+
+
+        // get latest updated novels
+
+        if (num <= 0) return false;
+
+        var cursor = bookList.find().sort({ hotIndex: 1 }).limit(num).toArray(function (err, doc) {
+
+            if (!err) {
+
+                if (callback) callback(null, doc);
+
+            } else {
+
+                if (callback) callback(err, null);
+
+            }
+
+
+        });
+
+    }
+
+
+
+
+
 }
 
 

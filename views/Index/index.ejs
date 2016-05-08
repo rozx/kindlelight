@@ -1,155 +1,93 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
 <head>
-<title>Simolio</title>
+<title>Kindle Light轻小说</title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta http-equiv="imagetoolbar" content="no" />
 <link rel="stylesheet" href="styles/layout.css" type="text/css" />
+
 </head>
+
+
+
 <body id="top">
-<div class="wrapper col1">
-  <div id="header">
-    <div id="logo">
-      <h1><a href="#">Simolio</a></h1>
-      <p>Free CSS Website Template</p>
+
+
+    <%- include('head'); %>
+
+
+
+
+
+    <div class="wrapper col3">
+        <div id="gallery">
+            <h2>{ 最新更新 }</h2>
+            <ul>
+
+
+                <%# writing recent updated books %>
+
+                <% recentBooks.forEach(function(e,i,a){ %>
+                <li>
+                    <a href="/book/<%=e.id%>"><img src="/book/cover/<%=e.id%>" width="200" height="300" /> </a>
+                    <p align="center"><b><%=e.title%></b></p>
+                    <p align="center">[<%=e.author%>]</p>
+                    <p align="center">最后更新：<%= dateFormat(new Date(e.lastUpdate),"HH:MM yyyy-mm-dd") %> </p>
+
+                </li>
+                <%  }); %>
+
+            </ul>
+            <br class="clear" />
+        </div>
+
+
+        <div id="gallery">
+            <h2>{ 热门小说 }</h2>
+            <ul>
+
+
+                <%# writing recent updated books %>
+
+                <% hotBooks.forEach(function(e,i,a){ %>
+                <li>
+                    <a href="/book/<%=e.id%>"><img src="/book/cover/<%=e.id%>" width="200" height="300" /> </a>
+                    <p align="center"><b><%=e.title%></b></p>
+                    <p align="center">[<%=e.author%>]</p>
+                    <p align="center">热门度：<%=e.hotIndex%></p>
+
+                </li>
+                <%  }); %>
+
+            </ul>
+            <br class="clear" />
+        </div>
+
     </div>
-    <div id="banner"><a href="#"><img src="images/demo/468x60.gif" alt="" /></a></div>
-    <br class="clear" />
-  </div>
-</div>
-<div class="wrapper col2">
-  <div id="topbar">
-    <div id="search">
-      <ul>
-        <li>Tel: xxxxx xxxxxxxxxx</li>
-        <li class="last">Mail: info@domain.com</li>
-      </ul>
-      <form action="#" method="post">
-        <fieldset>
-          <legend>Site Search</legend>
-          <input type="text" value="Search the site&hellip;"  onfocus="this.value=(this.value=='Search the site&hellip;')? '' : this.value ;" />
-          <input type="submit" name="go" id="go" value="GO" />
-        </fieldset>
-      </form>
+    <div class="wrapper col4">
+        <div id="container">
+            <div id="content">
+                <h2>{ 关于我们 }</h2>
+                <p>所有内容均收集自互联网，本站只将资源进行转换。</p>
+                <p>网站仅为写作爱好者及日语翻译学习交流提供试阅，如果你喜欢该作品，请购买正版支持.</p>
+                <p>如无意中侵犯了您的著作权，请及时与我们联系，我们将在第一时间做出回应！</p>
+            </div>
+            <div id="column">
+                <div class="flickrbox">
+                    <h2 class="title">{ 关注我们 }</h2>
+                    <ul>
+                        
+                    </ul>
+                    <br class="clear" />
+                </div>
+            </div>
+            <br class="clear" />
+        </div>
     </div>
-    <div id="topnav">
-      <ul>
-        <li><a class="active" href="index.html">Homepage</a>
-          <ul>
-            <li><a href="#">Lorem ipsum dolor</a></li>
-            <li><a href="#">Suspendisse in neque</a></li>
-            <li><a href="#">Praesent et eros</a></li>
-          </ul>
-        </li>
-        <li><a href="style-demo.html">Style Demo</a>
-          <ul>
-            <li><a href="#">Lorem ipsum dolor</a></li>
-            <li><a href="#">Suspendisse in neque</a></li>
-            <li><a href="#">Praesent et eros</a></li>
-          </ul>
-        </li>
-        <li><a href="full-width.html">Full Width</a>
-          <ul>
-            <li><a href="#">Lorem ipsum dolor</a></li>
-            <li><a href="#">Suspendisse in neque</a></li>
-            <li><a href="#">Praesent et eros</a></li>
-          </ul>
-        </li>
-        <li class="last"><a href="#">Our Services</a>
-          <ul>
-            <li><a href="#">Lorem ipsum dolor</a></li>
-            <li><a href="#">Suspendisse in neque</a></li>
-            <li><a href="#">Praesent et eros</a></li>
-          </ul>
-        </li>
-      </ul>
-    </div>
-    <br class="clear" />
-  </div>
-</div>
-<div class="wrapper col3">
-  <div id="gallery">
-    <h1>{ Latest Projects }</h1>
-    <ul>
-      <li><a href="#"><img src="images/1.jpg" alt="" /></a></li>
-      <li><a href="#"><img src="images/2.jpg" alt="" /></a></li>
-      <li class="last"><a href="#"><img src="images/3.jpg" alt="" /></a></li>
-      <li><a href="#"><img src="images/4.jpg" alt="" /></a></li>
-      <li><a href="#"><img src="images/5.jpg" alt="" /></a></li>
-      <li class="last"><a href="#"><img src="images/6.jpg" alt="" /></a></li>
-    </ul>
-    <br class="clear" />
-  </div>
-</div>
-<div class="wrapper col4">
-  <div id="container">
-    <div id="content">
-      <h2>{ About This Free CSS Template }</h2>
-      <p>This is a W3C standards compliant free website template from <a href="http://www.cssmoban.com/" title="模板之家">模板之家</a>.</p>
-      <p>This template is distributed using a <a href="#">Website Template Licence</a>, which allows you to use and modify the template for both personal and commercial use when you keep the provided credit links in the footer.</p>
-      <p>For more CSS templates visit <a href="#">Free Website Templates</a>.</p>
-      <p>Lacusenim inte trices lorem anterdum nam sente vivamus quis fauctor mauris. Wisinon vivamus wisis adipis laorem lobortis curabiturpiscingilla dui platea ipsum lacingilla.</p>
-      <p>Semalique tor sempus vestibulum libero nibh pretium eget eu elit montes. Sedsemporttis sit intesque felit quis elis et cursuspenatibulum tincidunt non curabitae.</p>
-    </div>
-    <div id="column">
-      <div class="flickrbox">
-        <h2 class="title">{ Flickr }</h2>
-        <ul>
-          <li><a href="#"><img src="images/7.jpg" alt="" /></a></li>
-          <li><a href="#"><img src="images/8.jpg" alt="" /></a></li>
-          <li class="last"><a href="#"><img src="images/9.jpg" alt="" /></a></li>
-          <li><a href="#"><img src="images/10.jpg" alt="" /></a></li>
-          <li><a href="#"><img src="images/11.jpg" alt="" /></a></li>
-          <li class="last"><a href="#"><img src="images/12.jpg" alt="" /></a></li>
-        </ul>
-        <br class="clear" />
-      </div>
-    </div>
-    <br class="clear" />
-  </div>
-</div>
-<div class="wrapper col5">
-  <div id="footer">
-    <div class="footbox">
-      <h2>Stay In The Know !</h2>
-      <p>Please enter your email to join our mailing list</p>
-      <form action="#" method="post">
-        <fieldset>
-          <legend>News Letter</legend>
-          <input type="text" value="Enter Email Here&hellip;"  onfocus="this.value=(this.value=='Enter Email Here&hellip;')? '' : this.value ;" />
-          <input type="submit" name="news_go" id="news_go" value="GO" />
-        </fieldset>
-      </form>
-      <p>To unsubscribe please <a href="#">click here &raquo;</a></p>
-    </div>
-    <div class="footbox">
-      <h2>Further Information !</h2>
-      <ul>
-        <li><a href="#">Business Terms &amp; Conditions &raquo;</a></li>
-        <li><a href="#">Disability Philosophy &raquo;</a></li>
-        <li class="last"><a href="#">Contact Our Company &raquo;</a></li>
-      </ul>
-    </div>
-    <div class="footbox last">
-      <h2>Company Details !</h2>
-      <address>
-      Company Name<br />
-      Street Name &amp; Number<br />
-      Town<br />
-      Postcode/Zip<br />
-      </address>
-      Tel: xxxxx xxxxxxxxxx
-      <!-- -->
-    </div>
-    <br class="clear" />
-  </div>
-</div>
-<div class="wrapper col6">
-  <div id="copyright">
-    <p class="fl_left">Copyright &copy; 2011 - All Rights Reserved - <a href="#">Domain Name</a></p>
-    <p class="fl_right">Template from <a href="http://www.cssmoban.com/" title="网站模板">网站模板</a></p>
-    <br class="clear" />
-  </div>
-</div>
+
+
+    <%- include('foot'); %>
+
+
 </body>
 </html>

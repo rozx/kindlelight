@@ -196,7 +196,7 @@ function wenku() {
 
     this.getBookInfo = function (html, bid) {
 
-        // bookInfo = {_id: '1', title: 'God World', id : '1922', image : 'xxx',author: 'xxx', status : '连载中 | 已完成',desc: 'xxxxxx',publisher: 'xxx',lastUpdate : 1231232131, listUrl : 'http://www.wenku8.com/novel/0/1922/index.htm'
+        // bookInfo = {_id: '1', title: 'God World', id : '1922', image : 'xxx',author: 'xxx', status : '连载中 | 已完成', wenkuUpdate:'2015-1-1', hotIndex: 0 ,desc: 'xxxxxx',publisher: 'xxx',lastUpdate : 1231232131, listUrl : 'http://www.wenku8.com/novel/0/1922/index.htm'
         //              chapters: [{ title : '1', lastConvert: 5454334 ,images: ['aaaa.jpg'],url: 'http://dl.wenku8.com/packtxt.php?aid=1922&vid=67426&charset=utf-8' }]}
 
         var bookInfo = {};
@@ -217,6 +217,8 @@ function wenku() {
         bookInfo.title = $('div table tr td table tr td span b').text();
         bookInfo.author = $('div table tr td').eq(4).text().split('：')[1];
         bookInfo.status = $('div table tr td').eq(5).text().split('：')[1];
+        bookInfo.hotIndex = 0;
+        bookInfo.wenkuUpdate = $('div table tr td').eq(6).text().split('：')[1];
         bookInfo.publisher = $('div table tr td').eq(3).text().split('：')[1];
         bookInfo.desc = $('div table tr td span').eq(4).text();
         bookInfo.imagesChecked = false;

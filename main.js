@@ -52,13 +52,16 @@ var books = require('./libs/books.js');
 // init favicon
 var favicon = require('serve-favicon');
 
+// init dateformat
+var dateFormat = require('dateformat');
+
 console.log("> initialized.");
 
 // app config
 
 app.set('view engine', 'ejs');
 app.use(express.static('public'));
-//app.use(express.static('./data/books'));
+app.use(express.static('./data/books'));
 app.use(favicon(__dirname + '/public/favicon.ico'));
 app.set('views', __dirname + '/views');
 
@@ -86,13 +89,47 @@ Init();
 
 app.get('/', function (req, res) {
 
-    res.render('Index/index');
+    res.redirect('/index');
+
+
+});
+
+app.get('/index', function (req, res) {
+
+    // Get recent updated books.
+    books.getRecentBooks(8, bookList, function (err, recent) {
+
+        // get recent books
+
+
+
+
+        // Get hot books
+
+        books.getHotBooks(8, bookList, function (err2, hot) {
+
+            if (!(err || err2)) {
+
+                res.render('Index/index', { recentBooks: recent, hotBooks: hot, dateFormat: dateFormat });
+
+            } else {
+
+                res.status(500);
+                res.end();
+            }
+
+        });
+
+
+    });
+
+    
 
 });
 
 app.get('*', function(req, res, next) {
 
-    // preven duplicate requests
+    // prevent duplicate requests
 
     if (req.headers.accept == "*/*") {
 
@@ -100,8 +137,13 @@ app.get('*', function(req, res, next) {
         
         //console.log(req.headers);
 
-        res.status(404);
-        res.end('Duplicate request!');
+        //res.status(404);
+        //res.end('Duplicate request!');
+     
+
+        //console.log(req.headers);
+        next();
+
     } else {
 
         next();
@@ -142,7 +184,7 @@ app.get('/book/cover/:id', function(req, res) {
 
     var bid = req.params.id;
     
-    console.log('> Cover requested:',bid);
+    //console.log('> Cover requested:',bid);
 
     books.getBookById(bid, bookList,function(bookInfo) {
 
@@ -153,9 +195,10 @@ app.get('/book/cover/:id', function(req, res) {
                 if (!err) {
 
                     res.writeHead(200, {
-                        'Content-Type': 'image/jpg'
+                        'Content-Type': 'image/jepg'
                     });
                     res.end(data, 'binary');
+
 
                 } else {
 

@@ -2,6 +2,12 @@
 a light novel site for kindle.
 source: wenku8.
 
+## V0.2
++ Added: Index page using ejs.
++ Added: Recent added books and hot books query.
++ Fixed: Cover image on kindle.
+
+
 
 ## V0.1.1
 + Reworte downloader, now muti-threads enabled.
