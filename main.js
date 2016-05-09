@@ -345,21 +345,28 @@ app.get('/convert/:bid/:cid',function(req,res,next){
                if (type == 'epub') {
 
 
-                    // update last convert type: epub, date
-                    bookInfo.chapters[cid].lastConvert = Date.now();
-                    bookInfo.chapters[cid].localFiles.epub = true;
+                   // update last convert type: epub, date
+                   bookInfo.chapters[cid].lastConvert = Date.now();
+                   bookInfo.chapters[cid].localFiles.epub = true;
+                   books.updateBookList(bookInfo, bookList);
 
-                    res.redirect('/result?success=true&message=ok');
+                   res.redirect('/result?success=true&message=ok');
 
-                }
-                else if (type == 'mobi') {
+               }
+               else if (type == 'mobi') {
 
-                    // update last convert type: mobi, date
-                    bookInfo.chapters[cid].lastConvert = Date.now();
-                    bookInfo.chapters[cid].localFiles.mobi = true;
-                }
+                   // update last convert type: mobi, date
+                   bookInfo.chapters[cid].lastConvert = Date.now();
+                   bookInfo.chapters[cid].localFiles.mobi = true;
+                   books.updateBookList(bookInfo, bookList);
 
-                books.updateBookList(bookInfo, bookList);
+               } else if (type == null) {
+
+                   res.redirect('/result?success=true&message=Ok!');
+
+               }
+
+                
             
             }
        

@@ -350,6 +350,9 @@ var converter = function() {
                                                     // no err moving the file
 
                                                     console.log('Converter > Convert successful! File:', mobiPath);
+
+                                                    taskList[0].callback(err, 'mobi', null);
+
                                                 } else {
 
                                                     // err moving the file
@@ -372,7 +375,7 @@ var converter = function() {
 
                                     }
 
-                                    taskList[0].callback(err, 'mobi',null);
+                                    
 
                                 });
 
@@ -445,7 +448,7 @@ var converter = function() {
 
             if (status == READY) taskList = [];
 
-
+            taskList[0].callback(null, null, null);
 
             //self.saveTask();
         }
