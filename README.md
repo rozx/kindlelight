@@ -2,6 +2,12 @@
 a light novel site for kindle.
 source: wenku8.
 
+## V0.2a
++ Added: BookInfo page.
++ Added: Local file check.
++ Added: Redirect to result page.
++ Fixed: lots bugs.
+
 ## V0.2
 + Added: Index page using ejs.
 + Added: Recent added books and hot books query.

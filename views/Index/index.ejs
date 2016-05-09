@@ -63,12 +63,34 @@
             <br class="clear" />
         </div>
 
+        <div id="gallery">
+            <h2>{ 随机小说 }</h2>
+            <ul>
+
+
+                <%# writing recent updated books %>
+
+                <% randBooks.forEach(function(e,i,a){ %>
+                <li>
+                    <a href="/book/<%=e.id%>"><img src="/book/cover/<%=e.id%>" width="200" height="300" /> </a>
+                    <p align="center"><b><%=e.title%></b></p>
+                    <p align="center">[<%=e.author%>]</p>
+
+                </li>
+                <%  }); %>
+
+            </ul>
+            <br class="clear" />
+        </div>
+
+
+
     </div>
     <div class="wrapper col4">
         <div id="container">
             <div id="content">
                 <h2>{ 关于我们 }</h2>
-                <p>所有内容均收集自互联网，本站只将资源进行转换。</p>
+                <p>所有内容均收集自互联网，本站只将资源进行转换并提供给同好交流。</p>
                 <p>网站仅为写作爱好者及日语翻译学习交流提供试阅，如果你喜欢该作品，请购买正版支持.</p>
                 <p>如无意中侵犯了您的著作权，请及时与我们联系，我们将在第一时间做出回应！</p>
             </div>

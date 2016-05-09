@@ -15,6 +15,9 @@ var util = require('util');
 // init file system
 var fs = require('fs-extra');
 
+// init url
+var url = require('url');
+
 // init encoding 
 
 var gbk = require('gbk');
@@ -101,29 +104,31 @@ app.get('/index', function (req, res) {
 
         // get recent books
 
-
-
-
         // Get hot books
 
         books.getHotBooks(8, bookList, function (err2, hot) {
 
-            if (!(err || err2)) {
 
-                res.render('Index/index', { recentBooks: recent, hotBooks: hot, dateFormat: dateFormat });
+            // Get random books
+
+            books.getRandomBooks(4, bookList, function (err3, random) { 
+
+            if (!(err || err2 || err3)) {
+
+                res.render('Index/index', { recentBooks: recent, hotBooks: hot, randBooks: random, dateFormat: dateFormat });
 
             } else {
 
                 res.status(500);
                 res.end();
-            }
+                }
+
+            });
 
         });
 
 
     });
-
-    
 
 });
 
@@ -211,6 +216,8 @@ app.get('/book/cover/:id', function(req, res) {
 });
 
 
+
+
 app.get('/book/:id', function(req, res, next) {
 
     var bid = req.params.id;
@@ -222,10 +229,21 @@ app.get('/book/:id', function(req, res, next) {
     books.getBookInfo(bid, bookList,function(bi) {
 
         bookInfo = bi;
-        res.send('<img src="/book/cover/' + bid + '">' + '<br>' + JSON.stringify(bookInfo));
+        //res.send('<img src="/book/cover/' + bid + '">' + '<br>' + JSON.stringify(bookInfo));
+
+        if (bi) {
+
+            res.render('Index/bookInfo', { bookInfo: bi, dateFormat: dateFormat});
+        } else {
+
+            res.status(500);
+            res.end();
+        }
     });
 
 });
+
+
 
 app.get('/read/:bid/', function(req, res, next) {
 
@@ -252,10 +270,12 @@ app.get('/read/:bid/', function(req, res, next) {
 
 
 
-app.get('/read/:bid/:cid', function(req, res, next) {
+app.get('/require/:bid/:cid', function(req, res, next) {
 
     var bid = req.params.bid;
     var cid = req.params.cid;
+
+
 
     books.getBookById(bid, bookList,function(bookInfo) {
 
@@ -270,7 +290,7 @@ app.get('/read/:bid/:cid', function(req, res, next) {
 
             console.log('> Getting book: [' + bid + '/' + cid + '] content.');
 
-            books.getBook(cid, bookInfo, function(data) {
+            books.getBook(cid, bookInfo, bookList, function(err,data) {
                 
 
                 // also get cover
@@ -278,7 +298,7 @@ app.get('/read/:bid/:cid', function(req, res, next) {
                 books.getCover(bookInfo);
 
                 //console.log(data);
-                res.send({data : data});
+                res.redirect('/result?success=true&message=ok');
 
             });
 
@@ -313,24 +333,34 @@ app.get('/convert/:bid/:cid',function(req,res,next){
         
        console.log('> Start converting:',bookInfo.title);
         
-       conv.queue(cid,bookInfo,function(err,option){
+       conv.queue(cid,bookInfo,function(err, type ,option){
        
 
            if (!err) {
 
                 // update the time of last convert time
 
-                bookInfo.chapters[cid].lastConvert = Date.now();
+                
+
+               if (type == 'epub') {
+
+
+                    // update last convert type: epub, date
+                    bookInfo.chapters[cid].lastConvert = Date.now();
+                    bookInfo.chapters[cid].localFiles.epub = true;
+
+                    res.redirect('/result?success=true&message=ok');
+
+                }
+                else if (type == 'mobi') {
+
+                    // update last convert type: mobi, date
+                    bookInfo.chapters[cid].lastConvert = Date.now();
+                    bookInfo.chapters[cid].localFiles.mobi = true;
+                }
 
                 books.updateBookList(bookInfo, bookList);
-
-				res.end();
             
-            } else {
-
-
-				res.status(404);
-                res.send(err);
             }
        
        });
@@ -342,7 +372,7 @@ app.get('/convert/:bid/:cid',function(req,res,next){
 
 
 
-app.get('/down/:format/:id/:cid', function(req,res,next){
+app.get('/download/:format/:id/:cid', function(req,res,next){
 
     var bid = req.params.id;
     var cid = req.params.cid;
@@ -373,9 +403,18 @@ app.get('/down/:format/:id/:cid', function(req,res,next){
 
     });
 
+});
 
 
-    
+app.get('/result', function (req, res, next) {
+
+    var success = req.query.success;
+    var message = req.query.message;
+
+    if (!success) success = false, message = 'No message.';
+
+    res.render('Result/jump', { success: success, message: message });
+
 });
 
 app.use(function (req, res, next) {

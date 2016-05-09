@@ -226,7 +226,7 @@ function downloader() {
                             .pipe(fs.createWriteStream(task.dir).on('close', function () {
 
                                 // callback
-                                if (task.callback) task.callback();
+                                if (task.callback) task.callback(null);
 
                                 console.log('Downloader > file saved to:', task.dir, '(' + self.currentThread() + '/', queueList.length + ')');
                                 self.remove(task,false);

@@ -1,0 +1,149 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+    <title>Kindle Light轻小说</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="imagetoolbar" content="no" />
+    <link rel="stylesheet" href="/styles/layout.css" type="text/css" />
+
+</head>
+
+
+
+<body id="top">
+
+
+    <%- include('head'); %>
+
+
+    <div class="wrapper col3">
+        <div id="breadcrumb">
+            <ul>
+                <li class="first">你的位置</li>
+                <li>&#187;</li>
+                <li><a href="/index">首页</a></li>
+                <li>&#187;</li>
+                <li class="current"><a href="#">【 <%= bookInfo.title%> 】</a></li>
+            </ul>
+        </div>
+    </div>
+
+
+
+
+
+    <div class="wrapper col4">
+        <div id="container">
+
+            <div id="column">
+                <div class="subnav">
+                    <h2>小说信息</h2>
+                    <ul>
+                        <li><a href="#"><p>作者：<%= bookInfo.author %> </p></a></li>
+                        <li><a href="#"><p>出版社：<%= bookInfo.publisher %> </p></a></li>
+                        <li><a><p>热度：<%= bookInfo.hotIndex %></p></a></li>
+                        <li><a><p>最后更新：<%= dateFormat(new Date(bookInfo.lastUpdate),"HH:MM yyyy-mm-dd") %></p></a></li>
+                    </ul>
+                </div>
+
+            </div>
+
+
+            <div id="content">
+
+                <h1><b><%= bookInfo.title %></b></h1>
+                <img class="imgl" src="/book/cover/<%= bookInfo.id%>" alt="" width="200" height="300" />
+
+                <p><%= bookInfo.desc %></p>
+
+
+
+
+            </div>
+
+            <div id="content">
+
+                <hr />
+
+                <b>小说分卷下载</b>
+
+                <br />
+                <br />
+
+                <table summary="章节" cellpadding="0" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>卷名</th>
+                            <th>txt版本下载</th>
+                            <th>epub版本下载</th>
+                            <th>mobi版本下载</th>
+                            <th>kindle推送</th>
+
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        <% bookInfo.chapters.forEach(function(e,i,a){ %>
+
+                        <% var style;
+                        if(i % 2 == 0){
+                        style = 'light';
+                        } else {
+                        style = 'dark';
+                        }
+
+                        %>
+
+
+                        <tr class="<%= style %>">
+                            <td><p align="center"><%= e.title %></p></td>
+                            <td>
+                                <% if(e.localFiles.txt){ %>
+                                <p align="center"><a href="/download/txt/<%= bookInfo.id %>/<%= i %>">下载</a></p>
+                                <% } else { %>
+                                <p align="center">暂无(<a href="/require/<%= bookInfo.id %>/<%= i %>"> 需求txt版本 </a>)</p>
+                                <% } %>
+                            </td>
+                            <td>
+                                <% if(e.localFiles.epub){ %>
+                                <p align="center"><a href="/download/epub/<%= bookInfo.id %>/<%= i %>">下载</a></p>
+                                <% } else { %>
+                                <p align="center">暂无(<a href="/convert/<%= bookInfo.id %>/<%= i %>"> 需求epub版本 </a>)</p>
+                                <% } %>
+                            </td>
+                            <td>
+                                <% if(e.localFiles.mobi){ %>
+                                <p align="center"><a href="/download/mobi/<%= bookInfo.id %>/<%= i %>">下载</a></p>
+                                <% } else { %>
+                                <p align="center">暂无</p>
+                                <% } %>
+                            </td>
+                            <td><p align="center">暂无</p></td>
+                        </tr>
+
+                        <% }); %>
+
+                    </tbody>
+                </table>
+
+
+            </div>
+
+
+
+            <div class="clear"></div>
+
+        </div>
+    </div>
+
+
+
+
+
+
+
+    <%- include('foot'); %>
+
+
+</body>
+</html>

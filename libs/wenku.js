@@ -197,7 +197,7 @@ function wenku() {
     this.getBookInfo = function (html, bid) {
 
         // bookInfo = {_id: '1', title: 'God World', id : '1922', image : 'xxx',author: 'xxx', status : '连载中 | 已完成', wenkuUpdate:'2015-1-1', hotIndex: 0 ,desc: 'xxxxxx',publisher: 'xxx',lastUpdate : 1231232131, listUrl : 'http://www.wenku8.com/novel/0/1922/index.htm'
-        //              chapters: [{ title : '1', lastConvert: 5454334 ,images: ['aaaa.jpg'],url: 'http://dl.wenku8.com/packtxt.php?aid=1922&vid=67426&charset=utf-8' }]}
+        //              chapters: [{ title : '1', localFiles : {txt : false, epub: false, mobi: false } ,lastConvert: 5454334 ,images: ['aaaa.jpg'],url: 'http://dl.wenku8.com/packtxt.php?aid=1922&vid=67426&charset=utf-8' }]}
 
         var bookInfo = {};
         var url = self.url + '/book/' + bid + '.htm';
@@ -253,7 +253,14 @@ function wenku() {
                     vid: vid,
                     title: title,
                     url: ulink,
-                    lastConvert : 0
+                    lastConvert: 0,
+                    localFiles : {
+                        txt: false,
+                        epub: false,
+                        mobi: false
+                    },
+                    images: []
+
 
                 });
 

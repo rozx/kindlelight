@@ -297,6 +297,11 @@ var converter = function() {
 
                                 console.log("Converter > Ebook Generated Successfully!");
 
+                                // callback epub file generated
+
+                                taskList[0].callback(null, 'epub' ,null);
+
+
                                 // start convert the book to .mobi
 
                                 // sudo ./bin/kindlegen/kindlegen -c2 ./data/books/1657/epub/57218.epub -o 57218.mobi
@@ -367,7 +372,7 @@ var converter = function() {
 
                                     }
 
-                                    taskList[0].callback(err, null);
+                                    taskList[0].callback(err, 'mobi',null);
 
                                 });
 
@@ -381,7 +386,7 @@ var converter = function() {
 
                                 console.error("Converter > Failed to generate Ebook because of ", err);
 
-                                taskList[0].callback(err, null);
+                                taskList[0].callback(err, null,null);
 
                                 // err
 
@@ -398,7 +403,7 @@ var converter = function() {
 
                             // error when ensure /epub/ dir
 
-                            taskList[0].callback(err, null);
+                            taskList[0].callback(err, null,null);
 
                             // err
 
@@ -418,7 +423,7 @@ var converter = function() {
 
                     // Error parse the book
 
-                    taskList[0].callback(err, null);
+                    taskList[0].callback(err, null,null);
 
                     // err
 

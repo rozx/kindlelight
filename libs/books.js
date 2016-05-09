@@ -30,10 +30,9 @@ var books = function () {
             'id': bookInfo.id
         });
 
-        cursor.toArray(function (err, doc) {
+        cursor.count(function (err, num) {
 
-
-            if (doc.length == 0) {
+            if (num <= 0) {
 
                 // insert new record
 
@@ -51,7 +50,7 @@ var books = function () {
 
                 bookList.update({
                     'id': bookInfo.id
-                }, bookInfo);
+                }, bookInfo, { multi: false, upsert: false, writeConcern: {w:1, j: false}});
 
                 if (callback) callback(err);
 
@@ -248,7 +247,7 @@ var books = function () {
     }
 
 
-    this.getBook = function (cid, bookInfo,callback) {
+    this.getBook = function (cid, bookInfo,bookList, callback) {
 
 
         // check local
@@ -266,11 +265,20 @@ var books = function () {
                     url: bookInfo.chapters[cid].url,
                     dir: bookDir + bookInfo.id + '/txt/' + bookInfo.chapters[cid].vid + '.txt',
                     encoding: 'utf8',
-                    callback: function (data) {
+                    callback: function (err) {
 
-                        // call back
+                        // update record
+                        if (!err) {
 
-                        callback(data);
+                            bookInfo.chapters[cid].localFiles.txt = true;
+                            self.updateBookList(bookInfo, bookList);
+
+                            // call back
+
+                            callback(null, data);
+                        }
+                        
+
 
                     }
                 });
@@ -279,9 +287,15 @@ var books = function () {
 
             } else {
 
+                if (!bookInfo.chapters[cid].localFiles.txt) {
+
+                    bookInfo.chapters[cid].localFiles.txt = true;
+                    self.updateBookList(bookInfo, bookList);
+                }
+
                 // file exists
 
-                callback(data);
+                callback(err,data);
             }
 
         });
@@ -372,6 +386,93 @@ var books = function () {
 
 
         });
+
+    }
+
+    this.getRandomBooks = function (num,bookList,callback) {
+
+        if (num <= 0) return false;
+
+        var totalNum;
+
+        bookList.find().count(function (err,numb) {
+
+            totalNum = numb;
+
+            if (num >= totalNum) {
+
+                // if there isnt enough number of records
+
+                var cursor = bookList.find().limit(totalNum).toArray(function (err, doc) {
+
+                    if (callback) callback(err, doc);
+
+                });
+
+            } else {
+
+                // if there is enough number of records
+
+                var rand = parseInt(Math.random() * (totalNum - 1));
+
+                var sortRandom = Math.random();
+                var sort;
+
+                // random sort methords
+
+                if (sortRandom > 0.9) {
+
+                    sort = { _id: 1 };
+                } else if (sortRandom > 0.8) {
+
+                    sort = { _id: -1 };
+                } else if (sortRandom > 0.7) {
+
+                    sort = { lastUpdate: 1 };
+
+                } else if (sortRandom > 0.6) {
+
+                    sort = { lastUpdate: -1 };
+                } else if (sortRandom > 0.5) {
+
+                    sort = { id: 1 };
+
+                } else if (sortRandom > 0.4) {
+
+                    sort = { id: -1 };
+                } else if (sortRandom > 0.3) {
+
+                    sort = { lastUpdate: -1 };
+
+                } else if (sortRandom > 0.2) {
+
+                    sort = { lastUpdate: -1 };
+                } else if (sortRandom > 0.1) {
+
+                    sort = { wenkuUpdate: 1 };
+
+                } else if (sortRandom > 0.0) {
+
+                    sort = { wenkuUpdate: -1 };
+                }
+
+
+
+
+                var cursor = bookList.find().sort(sort).skip(rand).limit(num).toArray(function (err, doc) {
+
+                    if (callback) callback(err, doc);
+
+                });
+
+            }
+
+
+
+        });
+
+        
+
 
     }
 
