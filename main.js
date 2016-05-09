@@ -350,8 +350,6 @@ app.get('/convert/:bid/:cid',function(req,res,next){
                    bookInfo.chapters[cid].localFiles.epub = true;
                    books.updateBookList(bookInfo, bookList);
 
-                   res.redirect('/result?success=true&message=ok');
-
                }
                else if (type == 'mobi') {
 

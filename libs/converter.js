@@ -125,7 +125,7 @@ var converter = function() {
 
 
                 if (taskList.length > 0) {
-                    if (callback) callback(new Error('Converter is busy!'), null);
+                    if (callback) callback(null, 'busy');
                 }
 
                 console.log('Converter > Tasks:', taskList.length);
@@ -447,8 +447,6 @@ var converter = function() {
             console.log('Converter > No task to do or Converter is working.');
 
             if (status == READY) taskList = [];
-
-            if (taskList.length > 0) taskList[0].callback(null, 'busy', null);
 
             //self.saveTask();
         }
