@@ -199,7 +199,7 @@ var converter = function() {
 
                         // else use the default cover image
 
-                        var coverPath = 'file://./' + vPath + '/image.jpg';
+                        var coverPath = './' + vPath + '/image.jpg';
 
                     }
                     var option = {
