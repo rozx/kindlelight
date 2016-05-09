@@ -448,7 +448,7 @@ var converter = function() {
 
             if (status == READY) taskList = [];
 
-            taskList[0].callback(null, null, null);
+            taskList[0].callback(null, 'busy', null);
 
             //self.saveTask();
         }

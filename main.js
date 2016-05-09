@@ -360,9 +360,9 @@ app.get('/convert/:bid/:cid',function(req,res,next){
                    bookInfo.chapters[cid].localFiles.mobi = true;
                    books.updateBookList(bookInfo, bookList);
 
-               } else if (type == null) {
+               } else if (type == 'busy') {
 
-                   res.redirect('/result?success=true&message=Ok!');
+                   res.redirect('/result?success=true&message=ok');
 
                }
 
