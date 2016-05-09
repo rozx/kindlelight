@@ -108,7 +108,16 @@
                                 <% if(e.localFiles.epub){ %>
                                 <p align="center"><a href="/download/epub/<%= bookInfo.id %>/<%= i %>">下载</a></p>
                                 <% } else { %>
-                                <p align="center">暂无(<a href="/convert/<%= bookInfo.id %>/<%= i %>"> 需求epub版本 </a>)</p>
+                                <p align="center">
+                                    暂无
+
+                                    <% if(e.localFiles.txt) { %>
+                                    (<a href="/convert/<%= bookInfo.id %>/<%= i %>">需求epub版本</a>)
+                                    <% } else { %>
+                                    (需要txt版本才能进行转换)
+                                    <% } %>
+
+                                </p>
                                 <% } %>
                             </td>
                             <td>
