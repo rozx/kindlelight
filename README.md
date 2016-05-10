@@ -2,6 +2,12 @@
 a light novel site for kindle.
 source: wenku8.
 
+## V0.2b
++ Added: downloader and converter status.
++ Fixed: Converter bugs - no callback when finish converting.
++ Fixed: Downloader bugs - crashing when failed to solve dns.
+
+
 ## V0.2a
 + Added: BookInfo page.
 + Added: Local file check.

@@ -9,7 +9,7 @@ var converter = function() {
     var self = this;
     var path = 'data/books/';
     var taskPath = 'data/tasks/converter.task';
-    var tempEpudPath = 'data/node_modules/epub_gen/tempDir';
+    var tempEpudPath = 'node_modules/epub_gen/tempDir';
     var tempCleanCount = 0;  // clean temp dir if count > 3
     var maxTempCleanCount = 5;
     var taskList = [];
@@ -75,7 +75,7 @@ var converter = function() {
 
     this.queue = function (cid, bookInfo, callback) {
 
-        
+        // callback(err, type{'epup' || 'mobi' || 'busy'}, bookInfo)
 
         var task = {
             cid: cid,
@@ -125,7 +125,7 @@ var converter = function() {
 
 
                 if (taskList.length > 0) {
-                    if (callback) callback(null, 'busy');
+                    if (callback) callback(null, 'busy', bookInfo);
                 }
 
                 console.log('Converter > Tasks:', taskList.length);
@@ -299,7 +299,7 @@ var converter = function() {
 
                                 // callback epub file generated
 
-                                taskList[0].callback(null, 'epub' ,null);
+                                taskList[0].callback(null, 'epub', taskList[0].bookInfo);
 
 
                                 // start convert the book to .mobi
@@ -351,7 +351,7 @@ var converter = function() {
 
                                                     console.log('Converter > Convert successful! File:', mobiPath);
 
-                                                    taskList[0].callback(err, 'mobi', null);
+                                                    taskList[0].callback(null, 'mobi', taskList[0].bookInfo);
 
                                                 } else {
 
@@ -389,7 +389,7 @@ var converter = function() {
 
                                 console.error("Converter > Failed to generate Ebook because of ", err);
 
-                                taskList[0].callback(err, null,null);
+                                taskList[0].callback(err, null, taskList[0].bookInfo);
 
                                 // err
 
@@ -406,7 +406,7 @@ var converter = function() {
 
                             // error when ensure /epub/ dir
 
-                            taskList[0].callback(err, null,null);
+                            taskList[0].callback(err, null, taskList[0].bookInfo);
 
                             // err
 
@@ -426,7 +426,7 @@ var converter = function() {
 
                     // Error parse the book
 
-                    taskList[0].callback(err, null,null);
+                    taskList[0].callback(err, null, taskList[0].bookInfo);
 
                     // err
 
@@ -533,6 +533,13 @@ var converter = function() {
             }
 
         });
+    }
+
+
+    this.getTaskNum = function () {
+
+        return taskList.length;
+
     }
 
 }

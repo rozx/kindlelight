@@ -1,0 +1,2 @@
+- Fix converter unable to callback mobi file check. 从第二个开始才有callback. epub callback 也有问题。 - 部分解决？还没测试
+- Fix err handling when downloading files(DNS error) - 解决？还没测试

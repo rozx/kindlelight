@@ -9,13 +9,15 @@ var books = function () {
     var bookDir = './data/books/';
 
     // modules
-    var downloader, wenku;
+    var downloader, wenku, converter;
+    var bookList;
     // functions
 
-    this.init = function (d,w,l) {
+    this.init = function (d,w,c) {
 
         downloader = d;
         wenku = w;
+        converter = c;
 
     }
 
@@ -361,6 +363,46 @@ var books = function () {
         });
 
 
+
+    }
+
+    this.queueToConvert = function (cid, bookInfo, bookList, callback) {
+
+        converter.queue(cid, bookInfo, function (err, t, bI) {
+
+            if (!err) {
+
+                // based on different type, return callback
+
+                if (t == 'epub') {
+
+                    // update bookInfo, tell it local file is ready.
+
+                    bookInfo.chapters[cid].localFiles.epub = true;
+                    self.updateBookList(bookInfo, bookList);
+
+                } else if (t == 'mobi') {
+
+                    // update bookInfo
+
+                    bookInfo.chapters[cid].localFiles.mobi = true;
+                    self.updateBookList(bookInfo, bookList);
+
+
+                } else {
+
+                    // callback only when successfully queued
+
+                    callback(null);
+                }
+
+            } else {
+
+                callback(err,null);
+
+            }
+
+        });
 
     }
 

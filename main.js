@@ -99,6 +99,8 @@ app.get('/', function (req, res) {
 
 app.get('/index', function (req, res) {
 
+
+
     // Get recent updated books.
     books.getRecentBooks(8, bookList, function (err, recent) {
 
@@ -115,9 +117,13 @@ app.get('/index', function (req, res) {
 
             if (!(err || err2 || err3)) {
 
-                res.render('Index/index', { recentBooks: recent, hotBooks: hot, randBooks: random, dateFormat: dateFormat });
+                res.render('Index/index', { recentBooks: recent, hotBooks: hot, randBooks: random, dateFormat: dateFormat, downListNum: downloader.getTaskNum(), convListNum: conv.getTaskNum() });
 
             } else {
+
+                console.log('> Internal server error!',err,err2,err3);
+
+
 
                 res.status(500);
                 res.end();
@@ -168,11 +174,15 @@ app.param('id', function(req, res, next, id) {
 
             jar = wenku.jar;
             downloader.jar = jar;
+            
 
             rq = rq.defaults({
                 jar: jar
             });
         }
+
+        if (!books.bookList) books.bookList = bookList;
+
         next();
 
     } else {
@@ -185,9 +195,9 @@ app.param('id', function(req, res, next, id) {
 
 });
 
-app.get('/book/cover/:id', function(req, res) {
+app.get('/book/cover/:bid', function(req, res) {
 
-    var bid = req.params.id;
+    var bid = req.params.bid;
     
     //console.log('> Cover requested:',bid);
 
@@ -298,7 +308,7 @@ app.get('/require/:bid/:cid', function(req, res, next) {
                 books.getCover(bookInfo);
 
                 //console.log(data);
-                res.redirect('/result?success=true&message=ok');
+                res.redirect('/result?success=true&message=1');
 
             });
 
@@ -332,40 +342,18 @@ app.get('/convert/:bid/:cid',function(req,res,next){
     books.getBookById(bid,bookList,function(bookInfo){
         
        console.log('> Start converting:',bookInfo.title);
-        
-       conv.queue(cid,bookInfo,function(err, type ,option){
+
+       books.queueToConvert(cid, bookInfo,bookList, function (err, type, bookInfo) {
        
+
+           
 
            if (!err) {
 
-                // update the time of last convert time
+                   //redirect to result page
 
-                
+                   res.redirect('/result?success=true&message=0');
 
-               if (type == 'epub') {
-
-
-                   // update last convert type: epub, date
-                   bookInfo.chapters[cid].lastConvert = Date.now();
-                   bookInfo.chapters[cid].localFiles.epub = true;
-                   books.updateBookList(bookInfo, bookList);
-
-               }
-               else if (type == 'mobi') {
-
-                   // update last convert type: mobi, date
-                   bookInfo.chapters[cid].lastConvert = Date.now();
-                   bookInfo.chapters[cid].localFiles.mobi = true;
-                   books.updateBookList(bookInfo, bookList);
-
-               } else if (type == 'busy') {
-
-                   res.redirect('/result?success=true&message=ok');
-
-               }
-
-                
-            
             }
        
        });
@@ -416,7 +404,23 @@ app.get('/result', function (req, res, next) {
     var success = req.query.success;
     var message = req.query.message;
 
-    if (!success) success = false, message = 'No message.';
+    if (success == null) success = false, message = 'No message.';
+
+    if (success == true) {
+
+        if (message == 0) {
+
+            // successfully queued the convertion
+
+            message = '本小说已加入转换任务，根据已有的任务，将于5 - 30分钟后转换完成。请刷新查看结果。';
+
+        } else if (message == 1) {
+
+            message = '已加入服务器下载列表，请刷新查看结果。';
+
+        }
+
+    }
 
     res.render('Result/jump', { success: success, message: message });
 
@@ -441,7 +445,7 @@ function Init() {
 
     // set books
     bookList = db.collection('books');
-    books.init(downloader, wenku,bookList);
+    books.init(downloader, wenku, conv);
     
     //repeat(TimedJobs).every(5, 'min').start.in(60, 'sec');
 

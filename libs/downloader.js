@@ -19,6 +19,7 @@ function downloader() {
 
 
 
+
     this.init = function(autoStart) {
 
         // check if task exists
@@ -232,7 +233,20 @@ function downloader() {
                                 self.remove(task,false);
                                 self.download();
 
-                            }));
+                            }).on('error', function (err) {
+
+                                // error when writing stream
+
+                                self.remove(task, true);
+                                self.download();
+
+                            })).on('error', function (err) {
+
+                                // error when getting remote file
+
+                                self.remove(task, true);
+                                self.download();
+                            });
 
                     } else {
 
@@ -270,6 +284,12 @@ function downloader() {
 
 
         });
+
+    }
+
+    this.getTaskNum = function () {
+
+        return queueList.length;
 
     }
 
