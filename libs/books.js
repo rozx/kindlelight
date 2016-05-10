@@ -22,7 +22,7 @@ var books = function () {
     }
 
 
-    this.updateBookList = function(bookInfo, bookList,callback) {
+    this.updateBookList = function(bookInfo,bookList,callback) {
 
         //if record is null
 
@@ -368,7 +368,7 @@ var books = function () {
 
     this.queueToConvert = function (cid, bookInfo, bookList, callback) {
 
-        converter.queue(cid, bookInfo, function (err, t, bI , c) {
+        converter.queue(cid, bookInfo, function (err, t) {
 
             if (!err) {
 
@@ -378,19 +378,30 @@ var books = function () {
 
                     // update bookInfo, tell it local file is ready.
 
-                    console.log('> Update .epub local file..');
+                    console.log('> Update .epub local file..', bookInfo.title, bookInfo.chapters[c].title);
 
-                    bI.chapters[c].localFiles.epub = true;
-                    self.updateBookList(bI, bookList);
+                    bookInfo.chapters[cid].localFiles = {
+                        txt: true,
+                        epub: true,
+                        mobi: false
+                    };
+
+                    self.updateBookList(bookInfo, bookList);
+
+
 
                 } else if (t == 'mobi') {
 
                     // update bookInfo
 
-                    console.log('> Update .mobi local file..');
+                    console.log('> Update .mobi local file..', bookInfo.title, bookInfo.chapters[c].title);
 
-                    bI.chapters[c].localFiles.mobi = true;
-                    self.updateBookList(bI, bookList);
+                    bookInfo.chapters[cid].localFiles = {
+                        txt: true,
+                        epub: true,
+                        mobi: true
+                    };
+                    self.updateBookList(bookInfo, bookList);
 
 
                 } else {

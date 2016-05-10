@@ -299,7 +299,7 @@ var converter = function() {
 
                                 // callback epub file generated
 
-                                taskList[0].callback(null, 'epub', taskList[0].cid, taskList[0].bookInfo);
+                                taskList[0].callback(null, 'epub');
 
 
                                 // start convert the book to .mobi
@@ -335,7 +335,7 @@ var converter = function() {
 
                                                     console.log('Converter > Convert successful! File:', mobiPath);
 
-                                                    taskList[0].callback(null, 'mobi', taskList[0].cid, taskList[0].bookInfo);
+                                                    taskList[0].callback(null, 'mobi');
 
                                                 } else {
 
@@ -446,21 +446,7 @@ var converter = function() {
             //self.saveTask();
 
 
-            // empty the temp files
 
-            if (tempCleanCount >= maxTempCleanCount) {
-
-                fs.emptyDir(tempEpudPath, function (err) {
-                    if (!err) console.log('Converter > Clean temp file successful!')
-                });
-
-                tempCleanCount = 0;
-
-            } else {
-
-
-                tempCleanCount++;
-            }
 
         }
 
@@ -528,6 +514,23 @@ var converter = function() {
         status = READY;
 
         self.saveTask();
+
+        // empty the temp files
+
+        if (tempCleanCount >= maxTempCleanCount) {
+
+            fs.emptyDir(tempEpudPath, function (err) {
+                if (!err) console.log('Converter > Clean temp file successful!')
+            });
+
+            tempCleanCount = 0;
+
+        } else {
+
+
+            tempCleanCount++;
+        }
+
     }
 
     this.saveTask = function() {
