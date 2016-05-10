@@ -299,7 +299,7 @@ var converter = function() {
 
                                 // callback epub file generated
 
-                                taskList[0].callback(null, 'epub', taskList[0].bookInfo);
+                                taskList[0].callback(null, 'epub', taskList[0].cid, taskList[0].bookInfo);
 
 
                                 // start convert the book to .mobi
@@ -351,7 +351,7 @@ var converter = function() {
 
                                                     console.log('Converter > Convert successful! File:', mobiPath);
 
-                                                    taskList[0].callback(null, 'mobi', taskList[0].bookInfo);
+                                                    taskList[0].callback(null, 'mobi', taskList[0].cid, taskList[0].bookInfo);
 
                                                 } else {
 
@@ -389,7 +389,7 @@ var converter = function() {
 
                                 console.error("Converter > Failed to generate Ebook because of ", err);
 
-                                taskList[0].callback(err, null, taskList[0].bookInfo);
+                                taskList[0].callback(err);
 
                                 // err
 
@@ -406,7 +406,7 @@ var converter = function() {
 
                             // error when ensure /epub/ dir
 
-                            taskList[0].callback(err, null, taskList[0].bookInfo);
+                            taskList[0].callback(err);
 
                             // err
 
@@ -426,7 +426,7 @@ var converter = function() {
 
                     // Error parse the book
 
-                    taskList[0].callback(err, null, taskList[0].bookInfo);
+                    taskList[0].callback(err);
 
                     // err
 

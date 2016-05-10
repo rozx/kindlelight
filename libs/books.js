@@ -368,7 +368,7 @@ var books = function () {
 
     this.queueToConvert = function (cid, bookInfo, bookList, callback) {
 
-        converter.queue(cid, bookInfo, function (err, t, bI) {
+        converter.queue(cid, bookInfo, function (err, t, bI , c) {
 
             if (!err) {
 
@@ -380,7 +380,7 @@ var books = function () {
 
                     console.log('> Update .epub local file..');
 
-                    bI.chapters[cid].localFiles.epub = true;
+                    bI.chapters[c].localFiles.epub = true;
                     self.updateBookList(bI, bookList);
 
                 } else if (t == 'mobi') {
@@ -389,7 +389,7 @@ var books = function () {
 
                     console.log('> Update .mobi local file..');
 
-                    bI.chapters[cid].localFiles.mobi = true;
+                    bI.chapters[c].localFiles.mobi = true;
                     self.updateBookList(bI, bookList);
 
 

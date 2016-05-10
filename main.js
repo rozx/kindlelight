@@ -423,9 +423,11 @@ app.get('/result', function (req, res, next) {
 
         }
 
-        res.render('Result/jump', { success: success, message: 'OK : )' });
+        
 
     }
+
+    res.render('Result/jump', { success: success, message: 'OK : )' });
 
     
 
