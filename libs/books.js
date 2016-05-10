@@ -378,15 +378,19 @@ var books = function () {
 
                     // update bookInfo, tell it local file is ready.
 
-                    bookInfo.chapters[cid].localFiles.epub = true;
-                    self.updateBookList(bookInfo, bookList);
+                    console.log('> Update .epub local file..');
+
+                    bI.chapters[cid].localFiles.epub = true;
+                    self.updateBookList(bI, bookList);
 
                 } else if (t == 'mobi') {
 
                     // update bookInfo
 
-                    bookInfo.chapters[cid].localFiles.mobi = true;
-                    self.updateBookList(bookInfo, bookList);
+                    console.log('> Update .mobi local file..');
+
+                    bI.chapters[cid].localFiles.mobi = true;
+                    self.updateBookList(bI, bookList);
 
 
                 } else {

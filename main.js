@@ -403,26 +403,31 @@ app.get('/result', function (req, res, next) {
 
     var success = req.query.success;
     var message = req.query.message;
+    var msg;
 
-    if (success == null) success = false, message = 'No message.';
+    if (success == null) success = false, msg = 'No message.';
 
     if (success == true) {
 
-        if (message == 0) {
+        if (message == 'conv') {
 
             // successfully queued the convertion
 
-            message = '本小说已加入转换任务，根据已有的任务，将于5 - 30分钟后转换完成。请刷新查看结果。';
+            msg = '本小说已加入转换任务，根据已有的任务，将于5 - 30分钟后转换完成。请刷新查看结果。';
+            
 
-        } else if (message == 1) {
+        } else if (message == 'require') {
 
-            message = '已加入服务器下载列表，请刷新查看结果。';
+            msg = '已加入服务器下载列表，请刷新查看结果。';
+            
 
         }
 
+        res.render('Result/jump', { success: success, message: 'OK : )' });
+
     }
 
-    res.render('Result/jump', { success: success, message: message });
+    
 
 });
 
