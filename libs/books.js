@@ -378,7 +378,7 @@ var books = function () {
 
                     // update bookInfo, tell it local file is ready.
 
-                    console.log('> Update .epub local file..', bookInfo.title, bookInfo.chapters[c].title);
+                    console.log('> Update .epub local file..', bookInfo.title, bookInfo.chapters[cid].title);
 
                     bookInfo.chapters[cid].localFiles = {
                         txt: true,
@@ -394,7 +394,7 @@ var books = function () {
 
                     // update bookInfo
 
-                    console.log('> Update .mobi local file..', bookInfo.title, bookInfo.chapters[c].title);
+                    console.log('> Update .mobi local file..', bookInfo.title, bookInfo.chapters[cid].title);
 
                     bookInfo.chapters[cid].localFiles = {
                         txt: true,

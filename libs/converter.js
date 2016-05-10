@@ -384,7 +384,7 @@ var converter = function() {
 
                                 console.error("Converter > Failed to generate Ebook because of ", err);
 
-                                taskList[0].callback(err);
+                                taskList[0].callback(err,null);
 
                                 // err
 
@@ -401,7 +401,7 @@ var converter = function() {
 
                             // error when ensure /epub/ dir
 
-                            taskList[0].callback(err);
+                            taskList[0].callback(err,null);
 
                             // err
 
@@ -421,7 +421,7 @@ var converter = function() {
 
                     // Error parse the book
 
-                    taskList[0].callback(err);
+                    taskList[0].callback(err,null);
 
                     // err
 
