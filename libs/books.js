@@ -376,9 +376,11 @@ var books = function () {
 
                 if (t == 'epub') {
 
+                    /*
+
                     // update bookInfo, tell it local file is ready.
 
-                    console.log('> Update .epub local file..', bookInfo.title, bookInfo.chapters[cid].title);
+                    
 
 
                     getBookInfo(bookInfo.id, bookList, function (bI) {
@@ -393,24 +395,24 @@ var books = function () {
 
                     });
 
+                    */
+
+                    console.log('> Update .epub local file..', bookInfo.title, bookInfo.chapters[cid].title);
+
                 } else if (t == 'mobi') {
 
                     // update bookInfo
 
                     console.log('> Update .mobi local file..', bookInfo.title, bookInfo.chapters[cid].title);
 
-                    getBookInfo(bookInfo.id, bookList, function (bI) {
 
-
-                        bI.chapters[cid].localFiles = {
+                    bookInfo.chapters[cid].localFiles = {
                             txt: true,
                             epub: true,
                             mobi: true
                         };
 
-                        self.updateBookList(bI, bookList);
-
-                    });
+                    self.updateBookList(bookInfo, bookList);
 
 
                 } else {
