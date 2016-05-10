@@ -64,6 +64,18 @@ var books = function () {
     }
 
 
+    this.updateBookItem = function (id, key, content ,bookList) {
+
+        var setModifier = { $set: {} };
+        setModifier.$set[key] = content;
+
+
+        bookList.update({ id: id }, setModifier);
+
+        console.log('> Item',key, 'Updated.');
+    }
+
+
 
     this.getBookById = function (id, bookList, callback) {
 
@@ -189,7 +201,13 @@ var books = function () {
                                         self.saveImages(cid, images, bookInfo, function (err,bookInfo) {
 
                                             // update cover
-                                            if(!err) self.updateBookList(bookInfo, bookList);
+                                            if (!err) {
+                                                //self.updateBookList(bookInfo, bookList);
+
+                                                var key = 'chapters.' + cid + '.images';
+
+                                                self.updateBookItem(bookInfo.id, key, bookInfo.chapters[cid].images, bookList);
+                                            }
                                         });
 
 
@@ -232,7 +250,12 @@ var books = function () {
                         self.saveImages(cid, images, bookInfo, function (err, bookInfo) {
 
                             // update cover
-                            if(!err) self.updateBookList(bookInfo, bookList);
+                            if (!err) {
+
+                                var key = 'chapters.' + cid + '.images';
+
+                                self.updateBookItem(bookInfo.id, key, bookInfo.chapters[cid].images, bookList);
+                            }
 
                         });
 
@@ -380,30 +403,12 @@ var books = function () {
 
                     console.log('> Update .epub local file..', bookInfo.title, bookInfo.chapters[cid].title);
 
-                    /*
 
-                        bookInfo.chapters[cid].localFiles = {
-                            txt: true,
-                            epub: true,
-                            mobi: false
-                        };
-
-                        self.updateBookList(bI, bookList);
-                    */
+                    var key = 'chapters.' + cid + '.localFiles.epub';
+                    var content = true;
 
 
-                    var chapter = {};
-
-                    chapter[cid] = bookInfo.chapters[cid];
-                    chapter[cid].localFiles = {
-
-                        txt: true,
-                        epub: true,
-                        mobi: false
-
-                    };
-
-                    bookList.update({ id: bookInfo.id }, { $set: chapter});
+                    self.updateBookItem(bookInfo.id, key, content, bookList);
 
 
                 } else if (t == 'mobi') {
@@ -412,30 +417,12 @@ var books = function () {
 
                     console.log('> Update .mobi local file..', bookInfo.title, bookInfo.chapters[cid].title);
 
-                    /*
 
-                    bookInfo.chapters[cid].localFiles = {
-                            txt: true,
-                            epub: true,
-                            mobi: true
-                        };
+                    var key = 'chapters.' + cid + '.localFiles.mobi';
+                    var content = true;
 
-                    self.updateBookList(bookInfo, bookList);
 
-                    */
-
-                    var chapter = {};
-
-                    chapter[cid] = bookInfo.chapters[cid];
-                    chapter[cid].localFiles = {
-
-                        txt: true,
-                        epub: true,
-                        mobi: true
-
-                    };
-
-                    bookList.update({ id: bookInfo.id }, { $set: chapter });
+                    self.updateBookItem(bookInfo.id, key, content, bookList);
 
 
                 } else {
