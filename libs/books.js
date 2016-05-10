@@ -380,15 +380,18 @@ var books = function () {
 
                     console.log('> Update .epub local file..', bookInfo.title, bookInfo.chapters[cid].title);
 
-                    bookInfo.chapters[cid].localFiles = {
-                        txt: true,
-                        epub: true,
-                        mobi: false
-                    };
 
-                    self.updateBookList(bookInfo, bookList);
+                    getBookInfo(bookInfo.id, bookList, function (bI) {
 
+                        bI.chapters[cid].localFiles = {
+                            txt: true,
+                            epub: true,
+                            mobi: false
+                        };
 
+                        self.updateBookList(bI, bookList);
+
+                    });
 
                 } else if (t == 'mobi') {
 
@@ -396,12 +399,18 @@ var books = function () {
 
                     console.log('> Update .mobi local file..', bookInfo.title, bookInfo.chapters[cid].title);
 
-                    bookInfo.chapters[cid].localFiles = {
-                        txt: true,
-                        epub: true,
-                        mobi: true
-                    };
-                    self.updateBookList(bookInfo, bookList);
+                    getBookInfo(bookInfo.id, bookList, function (bI) {
+
+
+                        bI.chapters[cid].localFiles = {
+                            txt: true,
+                            epub: true,
+                            mobi: true
+                        };
+
+                        self.updateBookList(bI, bookList);
+
+                    });
 
 
                 } else {
