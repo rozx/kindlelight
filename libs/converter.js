@@ -310,22 +310,6 @@ var converter = function() {
 
                                     if (!err) {
 
-                                        // empty the temp files
-
-                                        if (tempCleanCount >= maxTempCleanCount) {
-
-                                            fs.emptyDir(tempEpudPath, function (err) {
-                                                if (!err) console.log('Converter > Clean temp file successful!')
-                                            });
-
-                                            tempCleanCount = 0;
-
-                                        } else {
-
-
-                                            tempCleanCount ++;
-                                        }
-
                                         // no error when ensuring the mobi dir
 
                                         //start converting
@@ -339,12 +323,12 @@ var converter = function() {
 
                                         // start converting , from epub to mobi
 
-                                        kg.convert(epubPath, function(err, out) {
+                                        kg.convert(epubPath, function (err, out) {
 
 
                                             fs.move(orimobiPath, mobiPath, {
                                                 clobber: true // set overwrite
-                                            }, function(err) {
+                                            }, function (err) {
 
                                                 if (!err) {
                                                     // no err moving the file
@@ -372,6 +356,17 @@ var converter = function() {
                                         });
 
                                         // done converting epub
+
+                                    } else {
+
+                                        // err ensuring mobi path
+                                        console.log('Converter > Error ensoring mobi folder');
+
+
+                                        self.remove(0);
+
+                                        // after converted to mobi, keep convert
+                                        self.convertBook();
 
                                     }
 
@@ -449,6 +444,24 @@ var converter = function() {
             if (status == READY) taskList = [];
 
             //self.saveTask();
+
+
+            // empty the temp files
+
+            if (tempCleanCount >= maxTempCleanCount) {
+
+                fs.emptyDir(tempEpudPath, function (err) {
+                    if (!err) console.log('Converter > Clean temp file successful!')
+                });
+
+                tempCleanCount = 0;
+
+            } else {
+
+
+                tempCleanCount++;
+            }
+
         }
 
     }
