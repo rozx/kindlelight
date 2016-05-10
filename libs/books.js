@@ -376,28 +376,35 @@ var books = function () {
 
                 if (t == 'epub') {
 
-                    /*
-
                     // update bookInfo, tell it local file is ready.
 
-                    
+                    console.log('> Update .epub local file..', bookInfo.title, bookInfo.chapters[cid].title);
 
+                    /*
 
-                    getBookInfo(bookInfo.id, bookList, function (bI) {
-
-                        bI.chapters[cid].localFiles = {
+                        bookInfo.chapters[cid].localFiles = {
                             txt: true,
                             epub: true,
                             mobi: false
                         };
 
                         self.updateBookList(bI, bookList);
-
-                    });
-
                     */
 
-                    console.log('> Update .epub local file..', bookInfo.title, bookInfo.chapters[cid].title);
+
+                    var chapter = {};
+
+                    chapter[cid] = bookInfo.chapters[cid];
+                    chapter[cid].localFiles = {
+
+                        txt: true,
+                        epub: true,
+                        mobi: false
+
+                    };
+
+                    bookList.update({ id: bookInfo.id }, { $set: chapter});
+
 
                 } else if (t == 'mobi') {
 
@@ -405,6 +412,7 @@ var books = function () {
 
                     console.log('> Update .mobi local file..', bookInfo.title, bookInfo.chapters[cid].title);
 
+                    /*
 
                     bookInfo.chapters[cid].localFiles = {
                             txt: true,
@@ -413,6 +421,21 @@ var books = function () {
                         };
 
                     self.updateBookList(bookInfo, bookList);
+
+                    */
+
+                    var chapter = {};
+
+                    chapter[cid] = bookInfo.chapters[cid];
+                    chapter[cid].localFiles = {
+
+                        txt: true,
+                        epub: true,
+                        mobi: true
+
+                    };
+
+                    bookList.update({ id: bookInfo.id }, { $set: chapter });
 
 
                 } else {
