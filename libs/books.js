@@ -207,6 +207,7 @@ var books = function () {
                                                 var key = 'chapters.' + cid + '.images';
 
                                                 self.updateBookItem(bookInfo.id, key, bookInfo.chapters[cid].images, bookList);
+                                                self.updateBookItem(bookInfo.id, 'imagesChecked', true, bookList);
                                             }
                                         });
 
@@ -253,8 +254,11 @@ var books = function () {
                             if (!err) {
 
                                 var key = 'chapters.' + cid + '.images';
+                                
 
                                 self.updateBookItem(bookInfo.id, key, bookInfo.chapters[cid].images, bookList);
+                                self.updateBookItem(bookInfo.id, 'imagesChecked', true, bookList);
+
                             }
 
                         });
