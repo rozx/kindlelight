@@ -1,4 +1,2 @@
-- Fix converter unable to callback mobi file check. 从第二个开始才有callback. epub callback 也有问题。 - 部分解决？还没测试 - 已测试，还未解决，需要改变思路。 -预计是update整个文档的问题。 -已解决？
-- Fix err handling when downloading files(DNS error) - 解决？还没测试
 - 首页莫名崩溃，原因未知？
 - 加入mobi本地文件检查？
