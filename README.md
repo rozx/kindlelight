@@ -2,6 +2,10 @@
 a light novel site for kindle.
 source: wenku8.
 
+## V0.2c
++ Updated all plugins and urls.
++ Fixed: Converter bug: error when title is too long
+
 ## V0.2b
 + Added: downloader and converter status.
 + Fixed: Converter bugs - no callback when finish converting.

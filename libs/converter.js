@@ -264,9 +264,11 @@ var converter = function() {
                         } else {
 
                             // if it isnt image chapter
-
+							
+							
+							// trim the title if it is too long (> 30)
                             chapter = {
-                                title: element.title,
+                                title: element.title.length > 30 ? element.title.substring(0,30) + '...' : element.title,
                                 data: '<div><br><h2>' + element.title + '</h2><br><hr><br>' + element.content + '</div>'
                             };
                         }
