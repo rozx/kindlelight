@@ -4,6 +4,8 @@ source: wenku8.
 
 Important: increase stack size by using 'node --stack-size=val' to prevent the RangeError
 
+CMD: sudo pm2 start kindleLight.js --node-args="--stack-size=65536"
+
 ## V0.3
 + Added loacl file check
 + Added download and convert at when new book was inserted.

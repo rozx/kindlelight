@@ -1,0 +1,6 @@
+#!/bin/bash
+# Starting kindle light service with pm2
+
+echo "Starting kindle light service with pm2..."
+
+sudo pm2 start kindleLight.js --node-args="--stack-size=65536"
