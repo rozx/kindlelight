@@ -14,6 +14,7 @@ var converter = function() {
     var maxTempCleanCount = 5;
     var taskList = [];
     var status;
+	var taskLimit = 100;
 
     const READY = 0,
         WORKING = 1;
@@ -82,7 +83,12 @@ var converter = function() {
             bookInfo: bookInfo,
             callback: callback
         };
-
+		
+		// check if tasks is over the limit
+		
+		if(taskList.length >= taskLimit) return false;
+		
+		
         // check duplicate
 
         if (self.isDuplicate(task)) {

@@ -578,6 +578,7 @@ var books = function () {
 
 
                     self.updateBookItem(bookInfo.id, key, content, bookList);
+					self.updateBookItem(bookInfo.id, 'lastUpdate', Date.now(), bookList);
 
 
                 } else if (t == 'mobi') {
@@ -592,11 +593,14 @@ var books = function () {
 
 
                     self.updateBookItem(bookInfo.id, key, content, bookList);
+					self.updateBookItem(bookInfo.id, 'lastUpdate', Date.now(), bookList);
 
 
                 } else {
 
                     // callback only when successfully queued
+					
+					self.updateBookItem(bookInfo.id, 'lastUpdate', Date.now(), bookList);
 
                     callback(null);
                 }
