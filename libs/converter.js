@@ -9,7 +9,7 @@ var converter = function() {
     var self = this;
     var path = 'data/books/';
     var taskPath = 'data/tasks/converter.task';
-    var tempEpudPath = 'node_modules/epub_gen/tempDir';
+    var tempEpudPath = 'node_modules/epub-gen/tempDir';
     var tempCleanCount = 0;  // clean temp dir if count > 3
     var maxTempCleanCount = 5;
     var taskList = [];
@@ -325,110 +325,132 @@ var converter = function() {
                         if (!err) {
 
                             // no error ensure the dir : /epub/
+							
+							
+							try { 
+							
+								new epub(option, epubPath).promise.then(function() {
 
-                            new epub(option, epubPath).promise.then(function() {
+									console.log("Converter > Ebook Generated Successfully!");
 
-                                console.log("Converter > Ebook Generated Successfully!");
+									// callback epub file generated
 
-                                // callback epub file generated
-
-                                taskList[0].callback(null, 'epub');
-
-
-                                // start convert the book to .mobi
-
-                                // sudo ./bin/kindlegen/kindlegen -c2 ./data/books/1657/epub/57218.epub -o 57218.mobi
-
-                                fs.ensureDir(vPath + '/mobi/', function(err) {
-
-                                    if (!err) {
-
-                                        // no error when ensuring the mobi dir
-
-                                        //start converting
-
-                                        console.log('Converter > Converting .epub to .mobi.');
-
-                                        var epubPath = vPath + "/epub/" + taskList[0].bookInfo.chapters[taskList[0].cid].vid + '.epub';
-                                        var mobiPath = vPath + "/mobi/" + taskList[0].bookInfo.chapters[taskList[0].cid].vid + '.mobi';
-                                        var orimobiPath = vPath + "/epub/" + taskList[0].bookInfo.chapters[taskList[0].cid].vid + '.mobi';
+									taskList[0].callback(null, 'epub');
 
 
-                                        // start converting , from epub to mobi
+									// start convert the book to .mobi
 
-                                        kg.convert(epubPath, function (err, out) {
+									// sudo ./bin/kindlegen/kindlegen -c2 ./data/books/1657/epub/57218.epub -o 57218.mobi
 
+									fs.ensureDir(vPath + '/mobi/', function(err) {
 
-                                            fs.move(orimobiPath, mobiPath, {
-                                                clobber: true // set overwrite
-                                            }, function (err) {
+										if (!err) {
 
-                                                if (!err) {
-                                                    // no err moving the file
+											// no error when ensuring the mobi dir
 
-                                                    console.log('Converter > Convert successful! File:', mobiPath);
+											//start converting
 
-                                                    taskList[0].callback(null, 'mobi');
+											console.log('Converter > Converting .epub to .mobi.');
 
-                                                } else {
-
-                                                    // err moving the file
-
-                                                    console.log('Converter > Error moving the file! File:', mobiPath);
-
-                                                }
+											var epubPath = vPath + "/epub/" + taskList[0].bookInfo.chapters[taskList[0].cid].vid + '.epub';
+											var mobiPath = vPath + "/mobi/" + taskList[0].bookInfo.chapters[taskList[0].cid].vid + '.mobi';
+											var orimobiPath = vPath + "/epub/" + taskList[0].bookInfo.chapters[taskList[0].cid].vid + '.mobi';
 
 
-                                                self.remove(0);
+											// start converting , from epub to mobi
 
-                                                // after converted to mobi, keep convert
-                                                self.convertBook();
-                                            });
+											kg.convert(epubPath, function (err, out) {
 
 
-                                        });
+												fs.move(orimobiPath, mobiPath, {
+													clobber: true // set overwrite
+												}, function (err) {
 
-                                        // done converting epub
+													if (!err) {
+														// no err moving the file
 
-                                    } else {
+														console.log('Converter > Convert successful! File:', mobiPath);
 
-                                        // err ensuring mobi path
-                                        console.log('Converter > Error ensoring mobi folder');
+														taskList[0].callback(null, 'mobi');
 
+													} else {
 
-                                        self.remove(0);
+														// err moving the file
 
-                                        // after converted to mobi, keep convert
-                                        self.convertBook();
+														console.log('Converter > Error moving the file! File:', mobiPath);
 
-                                    }
-
-                                    
-
-                                });
-
-                                // keep convert
+													}
 
 
+													self.remove(0);
 
-                            }, function (err) {
+													// after converted to mobi, keep convert
+													self.convertBook();
+												});
 
-                                // err when converting to epub
 
-                                console.error("Converter > Failed to generate Ebook because of ", err);
+											});
 
-                                taskList[0].callback(err,null);
+											// done converting epub
 
-                                // err
+										} else {
 
-                                self.remove(0);
+											// err ensuring mobi path
+											console.log('Converter > Error ensoring mobi folder');
 
-                                console.log('Converter > Error when converting:', err);
 
-                                // keep convert
+											self.remove(0);
 
-                                self.convertBook();
-                            });
+											// after converted to mobi, keep convert
+											self.convertBook();
+
+										}
+
+										
+
+									});
+
+									// keep convert
+
+
+
+								}, function (err) {
+
+									// err when converting to epub
+
+									console.error("Converter > Failed to generate Ebook because of ", err);
+
+									taskList[0].callback(err,null);
+
+									// err
+
+									self.remove(0);
+
+									console.log('Converter > Error when converting:', err);
+
+									// keep convert
+
+									self.convertBook();
+								});
+							
+							} catch (err){
+								
+								// caught error when converting to epub
+								
+								console.log('Converter > Error when converting:', err );
+								
+								console.log('Converter > Will ignore current task and move on.');
+								
+								// err
+
+								self.remove(0);
+								
+								// keep convert
+
+								self.convertBook();
+							}
+
+                            
 
                         } else {
 
