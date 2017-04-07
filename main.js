@@ -244,6 +244,7 @@ app.get('/book/:id', function(req, res, next) {
         if (bi) {
 
             res.render('Index/bookInfo', { bookInfo: bi, dateFormat: dateFormat});
+			
         } else {
 
             res.status(500);
@@ -345,8 +346,6 @@ app.get('/convert/:bid/:cid',function(req,res,next){
 
        books.queueToConvert(cid, bookInfo,bookList, function (err, type, bookInfo) {
        
-
-           
 
            if (!err) {
 

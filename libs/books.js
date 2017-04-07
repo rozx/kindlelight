@@ -5,6 +5,8 @@ var gbk = require('gbk');
 
 var books = function () {
 
+	var autoDownloadTxt = true;
+	var autoConvert = true;
     var self = this;
     var bookDir = './data/books/';
 
@@ -213,6 +215,46 @@ var books = function () {
 
 
                                     });
+									
+									// get txt version of chapters
+									
+									if(autoDownloadTxt){
+									
+										bookInfo.chapters.forEach(function (e, i, array){
+											
+											
+											console.log('> Getting book: [' + bookInfo.title + '/' + i + '] content.');
+											
+											self.getBook(i, bookInfo, bookList, function(err,data) {
+				
+
+											// also get cover
+
+											//self.getCover(bookInfo);
+											
+												if(autoConvert){
+
+													console.log('> Got txt version of the book, converting....');
+												
+													self.queueToConvert(i, bookInfo, bookList, function (err, type, bookInfo) {
+		   
+
+													   if (!err) {
+
+															//redirect to result page
+
+															   
+															console.log('> Converting: [' + e.title + '/' + i + ']');
+														}
+												   
+													});
+												}
+
+											});
+
+										});
+										
+									}
 
                                 } else {
 
@@ -266,6 +308,10 @@ var books = function () {
                     });
 
                 }
+				
+				// check local files
+				
+				self.checkLocalFiles(bookInfo, bookList);
 
             }
 
@@ -274,6 +320,125 @@ var books = function () {
 
 
     }
+	
+	this.checkLocalFiles = function (bookInfo, bookList){
+		
+		
+		
+		
+		// for each chapter, check local file
+		// check only every one minute
+		
+		if(!bookInfo.lastLocalFileCheck || Date.now() - bookInfo.lastLocalFileCheck >= 60000){
+		
+			bookInfo.chapters.forEach(function (e, i, array){
+				
+				console.log('> Check local file of: ' + bookInfo.title);
+
+				// check txt version first
+				
+				var txtDir = bookDir + bookInfo.id + '/txt/' + bookInfo.chapters[i].vid + '.txt';
+				
+				console.log('> Checking ' + txtDir);
+				
+				fs.access(txtDir, 'wr', (err) => {
+					
+					if(err){
+						
+						//console.log('> book ' + bookInfo.title + ', chapter ' + i + ' txt version does not exist! ');
+						
+						var key = 'chapters.' + i + '.localFiles.txt';
+						var content = false;
+
+
+						self.updateBookItem(bookInfo.id, key, content, bookList);
+						
+					} else {
+						
+						//console.log('> book ' + bookInfo.title + ', chapter ' + i + ' txt version exist! ');
+						
+						var key = 'chapters.' + i + '.localFiles.txt';
+						var content = true;
+
+
+						self.updateBookItem(bookInfo.id, key, content, bookList);
+					}
+					
+				});
+				
+				
+				// check epub version
+				
+				var epubDir = bookDir + bookInfo.id + '/epub/' + bookInfo.chapters[i].vid + '.epub';
+				
+				fs.access(epubDir , 'wr', (err) => {
+					
+					if(err){
+						
+						//console.log('> book ' + bookInfo.title + ', chapter ' + i + ' epub version does not exist! ');
+						
+						var key = 'chapters.' + i + '.localFiles.epub';
+						var content = false;
+
+
+						self.updateBookItem(bookInfo.id, key, content, bookList);					
+						
+						
+					} else {
+						
+						//console.log('> book ' + bookInfo.title + ', chapter ' + i + ' epub version exist! ');
+						
+						var key = 'chapters.' + i + '.localFiles.epub';
+						var content = true;
+
+
+						self.updateBookItem(bookInfo.id, key, content, bookList);	
+					}
+					
+				});
+
+
+				// check mobi version
+				
+				var mobiDir = bookDir + bookInfo.id + '/mobi/' + bookInfo.chapters[i].vid + '.mobi';
+				
+				fs.access(mobiDir, 'wr', (err) => {
+					
+					if(err){
+						
+						//console.log('> book ' + bookInfo.title + ', chapter ' + i + ' mobi version does not exist! ');
+						
+						var key = 'chapters.' + i + '.localFiles.mobi';
+						var content = false;
+
+
+						self.updateBookItem(bookInfo.id, key, content, bookList);	
+						
+						
+						
+					} else {
+						
+						//console.log('> book ' + bookInfo.title + ', chapter ' + i + ' mobi version exist! ');
+						
+						var key = 'chapters.' + i + '.localFiles.mobi';
+						var content = true;
+
+
+						self.updateBookItem(bookInfo.id, key, content, bookList);	
+					}
+					
+				});
+				
+				
+				// update time
+				
+				
+				self.updateBookItem(bookInfo.id, 'lastLocalFileCheck', Date.now(), bookList);	
+			
+			});
+		}
+		
+	}
 
 
     this.getBook = function (cid, bookInfo,bookList, callback) {

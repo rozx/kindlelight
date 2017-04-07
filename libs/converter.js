@@ -190,18 +190,43 @@ var converter = function() {
                     if (taskList[0].bookInfo.chapters[taskList[0].cid].images[0]) {
 
                         // if there is a cover for chapter exist
+						
+						console.log('Converter > Cover for chapter exist!');
 
+						
                         var coverPath = taskList[0].bookInfo.chapters[taskList[0].cid].images[0];
+						
+						console.log('Converter > Cover path is: ' + coverPath);
+						
 
-                        if (coverPath.startsWith('./')) coverPath = pathF.resolve(__dirname + '/../',coverPath);
+                        if (coverPath.startsWith('./')) {
+							
+							coverPath = pathF.resolve(__dirname + '/../',coverPath);
+							
+							if (fs.accessSync(coverPath, 'ws')){
+								
+								var coverPath = './' + vPath + '/image.jpg';
+								//console.log('Converter > However, cover for chapter does not exist! Using default image!');
+							}
+							
+						} else {
+							
+								var coverPath = './' + vPath + '/image.jpg';
+								console.log('Converter > However, cover for chapter does not exist! Using default image!');
+							
+						}
+
 
                     } else {
 
                         // else use the default cover image
 
                         var coverPath = './' + vPath + '/image.jpg';
+						console.log('Converter > Cover for chapter does not exist, using default cover image!');
 
                     }
+					
+					
                     var option = {
                         title: taskList[0].bookInfo.title + ' ' + taskList[0].bookInfo.chapters[taskList[0].cid].title, // *Required, title of the book.
                         author: taskList[0].bookInfo.author,

@@ -223,6 +223,7 @@ function wenku() {
         bookInfo.desc = $('div table tr td span').eq(4).text();
         bookInfo.imagesChecked = false;
         bookInfo.lastUpdate = Date.now();
+		bookInfo.lastLocalFileCheck = 0;
 
 
         return bookInfo;

@@ -2,6 +2,12 @@
 a light novel site for kindle.
 source: wenku8.
 
+## V0.3
++ Added loacl file check
++ Added download and convert at when new book was inserted.
++ Fixed the coverting error when cover is not found.
++ More minor bugs fixed.
+
 ## V0.2c
 + Updated all plugins and urls.
 + Fixed: Converter bug: error when title is too long
