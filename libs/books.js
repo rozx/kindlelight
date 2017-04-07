@@ -174,7 +174,7 @@ var books = function () {
                             // get chapter info
 
                             rq({
-                                url: wenku.url + '/modules/article/packtxt.php?id=' + bookInfo.id,
+                                url: wenku.url + '/modules/article/packshow.php?id=' + bookInfo.id + '&type=txt',
                                 encoding: null,
                                 jar: wenku.jar
                             }, function (err, respond2, html) {
