@@ -7,6 +7,10 @@
 var rq = require('request');
 var fs = require('fs-extra');
 
+// init repeat
+
+var repeat = require('repeat');
+
 // main function
 function downloader() {
 
@@ -42,11 +46,13 @@ function downloader() {
                     if (queueList == undefined) queueList = [];
                 })
             }
+			
+			    // save tasks every one min
+
+				repeat(self.save).every(30, 'sec').start.in(5, 'sec');
         });
 
-        
 
-        
 
     }
 
@@ -149,7 +155,7 @@ function downloader() {
             console.log('Downloader > New task queued :', task.url, '(' + self.currentThread() + '/', queueList.length + ')');
         }
 
-        self.save();
+        //self.save();
 
     }
 
@@ -179,7 +185,7 @@ function downloader() {
         });
 
 
-        self.save();
+        //self.save();
         return result;
 
     }
@@ -269,7 +275,7 @@ function downloader() {
     }
 
     this.save = function() {
-
+		
         fs.outputJson(taskFilePath, queueList, function(err) {
 
             if (!err) {
