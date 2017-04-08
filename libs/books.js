@@ -6,7 +6,7 @@ var gbk = require('gbk');
 var books = function () {
 	
 	
-	var updateCheckLimit = 3;
+	var updateCheckLimit = 5;
 	
 	var autoDownloadTxt = true;
 	var autoConvert = true;
@@ -77,7 +77,7 @@ var books = function () {
 
         bookList.update({ id: id }, setModifier);
 
-        console.log('> Item',key, 'Updated.');
+        //console.log('> Item',key, 'Updated.');
     }
 
 
@@ -309,7 +309,7 @@ var books = function () {
 				
 				// check local files
 				
-				self.checkLocalFiles(bookInfo, bookList);
+				self.checkLocalFiles(false ,bookInfo, bookList);
 				
 				// if bookInfo is already in data base!
 
@@ -336,9 +336,114 @@ var books = function () {
 						
 						console.log('> book  [' + bi.title + '] has a update! Reimporting...');
 						
-						self.getBookInfo(e.id, bookList, true, callback);
+						//self.getBookInfo(e.id, bookList, true, callback);
 						
 						
+						// check the latest chapter
+						wenku.getLastestChapter(e.id, function(chapterName){
+							
+							if(!chapterName){
+								
+								console.log('> Error getting the chapter name for book id:' + e.id + ', reimporting all.');
+								
+								self.getBookInfo(e.id, bookList, true, callback);
+								
+							} else {
+								
+								var result = false;
+								var resultNum = 0;
+								
+								bi.chapters.forEach(function (chapter, chapterIndex, chapters){
+									
+									if(chapterName.includes(chapter.title)){
+										
+										result = true;
+										resultNum ++;
+										
+										if(resultNum > 1) return false;
+										
+										console.log('> Updating book id:' + e.id + ', Chapter ' + chapter.title);
+										
+										// found the updated chapter
+										// clean local files
+										
+										self.cleanChapterFilesSync(chapterIndex, bi, bookList);
+										self.getChapterLocalContent(chapterIndex, bi, bookList);
+										
+										// update record
+										self.updateBookItem(bi.id, 'wenkuUpdate', e.wenkuUpdate , bookList);
+										self.updateBookItem(bi.id, 'lastUpdate', Date.now() , bookList);
+										self.updateBookItem(bi.id, 'lastLocalFileCheck', 0 , bookList);
+									
+										
+									}
+								
+								});
+								
+								
+								// if there is not result, means there is a new chapter
+								
+								if(!result){
+									
+									// new chapter
+									
+									console.log('> Book id:' + e.id + ' has a new  Chapter ' + chapter.title);
+									
+									
+									rq({
+										url: wenku.url + '/modules/article/packshow.php?id=' + bookInfo.id + '&type=txt',
+										encoding: null,
+										jar: wenku.jar
+									}, function (err, respond2, html) {
+										
+										 if (!err) {
+											// if no error
+											html = gbk.toString('utf-8', html);
+											bi = wenku.getChapterInfo(bi, html);
+											
+											
+											// find out the latest chapter
+											bi.chapters.forEach(function (chapter, chapterIndex, chapters){
+									
+												if(chapterName.includes(chapter.title)){
+													
+													console.log('> Getting local content for new  Chapter ' + chapter.title);
+													
+													// got ya, get local content
+													
+													self.getChapterLocalContent(chapterIndex, bi, bookList);
+													
+													
+													// update record
+													self.updateBookItem(bi.id, 'chapters', bi.chapters , bookList);
+													self.updateBookItem(bi.id, 'wenkuUpdate', e.wenkuUpdate , bookList);
+													self.updateBookItem(bi.id, 'lastUpdate', Date.now() , bookList);
+													self.updateBookItem(bi.id, 'lastLocalFileCheck', 0 , bookList);
+													
+													
+												}
+											});
+											
+											
+										 }
+										
+										
+									});
+									
+								}
+								
+								if(resultNum > 1){
+									
+									// if there is multiple results
+									
+									console.log('> Multiple results for book id:' + e.id + ", reimporting all.");
+								
+									self.getBookInfo(e.id, bookList, true, callback);
+									
+								}
+							}
+							
+						});
 						
 					} else {
 						
@@ -353,10 +458,89 @@ var books = function () {
 			
 		});
 		
+	}
+	
+	this.getChapterLocalContent = function(chapterIndex, bi, bookList){
+		
+		
+		// get image
+
+		wenku.getImages(bi, function (err,cid,bookInfo,images) {
+
+			// save images to local
+			self.saveImages(cid, images, bookInfo, function (err,bookInfo) {
+				
+				if(cid != i) return false;
+
+				// update cover
+				if (!err) {
+					//self.updateBookList(bookInfo, bookList);
+
+					var key = 'chapters.' + cid + '.images';
+
+					self.updateBookItem(bi.id, key, bi.chapters[cid].images, bookList);
+					self.updateBookItem(bi.id, 'imagesChecked', true, bookList);
+				}
+			});
+
+
+		});
+		
+		
+		// get local file and convert!
+		
+		console.log('> Getting book: [' + bi.title + '/' + chapterIndex + '] content.');
+		
+		self.getBook(chapterIndex, bi, bookList, function(err,data) {
+		
+			if(autoConvert){
+
+				console.log('> Got txt version of the book, converting....');
+			
+				self.queueToConvert(chapterIndex, bi, bookList, function (err, type, bookInfo) {
+
+
+				   if (!err) {
+
+						//redirect to result page
+
+						   
+						console.log('> Converting: [' + bi.title + '/' + chapterIndex + ']');
+					}
+			   
+				});
+			}
+
+		});	
+		
 		
 	}
 	
-	this.checkLocalFiles = function (bookInfo, bookList){
+	
+	this.cleanChapterFilesSync = function (cid, bookInfo, bookList){
+		
+		var txtDir = bookDir + bookInfo.id + '/txt/' + bookInfo.chapters[cid].vid + '.txt';
+		var epubDir = bookDir + bookInfo.id + '/epub/' + bookInfo.chapters[cid].vid + '.epub';
+		var mobiDir = bookDir + bookInfo.id + '/mobi/' + bookInfo.chapters[cid].vid + '.mobi';
+		
+		// removing txt file
+		fs.rmdirSync(txtDir);
+		
+		// removing epub file
+		fs.rmdirSync(epubDir);
+		
+		// removing mobi file
+		fs.rmdirSync(epubDir);
+		
+		// update records
+		
+		self.updateBookItem(bookInfo.id, 'chapters.' + cid + '.localFiles.txt', false, bookList);
+		self.updateBookItem(bookInfo.id, 'chapters.' + cid + '.localFiles.epub', false, bookList);
+		self.updateBookItem(bookInfo.id, 'chapters.' + cid + '.localFiles.mobi', false, bookList);
+		
+	}
+	
+	this.checkLocalFiles = function (forceCheck ,bookInfo, bookList){
 		
 		
 		
@@ -364,17 +548,19 @@ var books = function () {
 		// for each chapter, check local file
 		// check only every one minute
 		
-		if(!bookInfo.lastLocalFileCheck || Date.now() - bookInfo.lastLocalFileCheck >= 60000){
+		if(forceCheck || !bookInfo.lastLocalFileCheck || Date.now() - bookInfo.lastLocalFileCheck >= 60000){
+			
+			console.log('> Check local file of: ' + bookInfo.title);
 		
 			bookInfo.chapters.forEach(function (e, i, array){
 				
-				console.log('> Check local file of: ' + bookInfo.title);
+				
 
 				// check txt version first
 				
 				var txtDir = bookDir + bookInfo.id + '/txt/' + bookInfo.chapters[i].vid + '.txt';
 				
-				console.log('> Checking ' + txtDir);
+				//console.log('> Checking ' + txtDir);
 				
 				fs.access(txtDir, 'wr', (err) => {
 					

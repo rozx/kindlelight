@@ -14,7 +14,7 @@ var converter = function() {
     var maxTempCleanCount = 5;
     var taskList = [];
     var status;
-	var taskLimit = 100;
+	var taskLimit = 200;
 
     const READY = 0,
         WORKING = 1;

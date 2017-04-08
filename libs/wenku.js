@@ -231,6 +231,8 @@ function wenku() {
 
 
     this.getChapterInfo = function (bookInfo, html) {
+		
+		// Sync function
 
         bookInfo.chapters = [];
 
@@ -434,6 +436,9 @@ function wenku() {
     }
 	
 	
+	
+
+	
 	this.getUpdateBookList = function(callback){
 		
 		// updatedBookList = [{id: '123132', title : 'bookTitle', wenkuUpdate: '2015-1-1'}]
@@ -466,12 +471,12 @@ function wenku() {
 				
 					var bookInfo = {};
 					bookInfo.id = $('b a', e).attr('href').replace('.htm','').replace(self.url + '/book/', '').replace('/', '');
-					
-					console.log("Wenku > Checking " + bookInfo.id + '/', i);
-					
 					bookInfo.title = $('b a', e).text();
 					bookInfo.wenkuUpdate = $('p', e).eq(1).text().split('/')[0].split(':')[1];
 					
+					//console.log("Wenku > Checking " + bookInfo.id + '/', i);
+					
+
 					console.log('Wenku > Last update: [' + bookInfo.title + '/' + bookInfo.wenkuUpdate + ']');
 					
 					updatedBookList.push(bookInfo);
@@ -493,6 +498,39 @@ function wenku() {
 		
 		
 	}
+	
+	
+		this.getLastestChapter = function(bid, callback){
+			
+			var updateUrl = self.url + '/book/' + bid + '.htm';
+			var chapterName = '';
+			
+			
+			 rq({
+				url: updateUrl,
+				encoding: null,
+				jar: self.jar
+			
+			}, function (error, response, html) {
+
+				if (!error) {
+					
+					var html_dec = gbk.toString('utf-8', html);
+					var $ = cheerio.load(html_dec);
+					
+					console.log('Wenku > Checking update chapter for book id:' + bid);
+					
+					chapterName = $('span[style="font-size:14px;"] a').text();
+					
+					callback(chapterName);
+					
+				} else {
+					
+					if(callback) callback(null);
+				}
+			
+			});
+		}
 
 
 }
