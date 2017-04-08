@@ -236,7 +236,7 @@ app.get('/book/:id', function(req, res, next) {
     console.log('> Bookinfo requested, id:', bid);
 
 
-    books.getBookInfo(bid, bookList,function(bi) {
+    books.getBookInfo(bid, bookList, false, function(bi) {
 
         bookInfo = bi;
         //res.send('<img src="/book/cover/' + bid + '">' + '<br>' + JSON.stringify(bookInfo));
@@ -260,7 +260,7 @@ app.get('/read/:bid/', function(req, res, next) {
 
     var bid = req.params.bid;
 
-    books.getBookInfo(bid, bookList,function(bookInfo) {
+    books.getBookInfo(bid, bookList, false, function(bookInfo) {
 
         if (bookInfo) {
 
@@ -363,6 +363,15 @@ app.get('/convert/:bid/:cid',function(req,res,next){
 });
 
 
+app.get('/checkUpdate',function(req,res,next){
+	
+	
+
+
+	res.send('Good!');
+});
+
+
 
 app.get('/download/:format/:id/:cid', function(req,res,next){
 
@@ -372,7 +381,7 @@ app.get('/download/:format/:id/:cid', function(req,res,next){
 
     
 
-    books.getBookInfo(bid, bookList, function (bookInfo) {
+    books.getBookInfo(bid, bookList, false, function (bookInfo) {
 
         if (bookInfo) {
 
@@ -435,8 +444,6 @@ app.get('/result', function (req, res, next) {
 app.use(function (req, res, next) {
 
 
-    
-
     res.status(404);
     res.render('Error/404');
     //res.send('Invalid URL');
@@ -453,6 +460,26 @@ function Init() {
     bookList = db.collection('books');
     books.init(downloader, wenku, conv);
     
-    //repeat(TimedJobs).every(5, 'min').start.in(60, 'sec');
+    repeat(TimedJobs).every(60, 'min').start.in(5, 'sec');
+	
+	console.log('> Started timed jobs..');
 
+}
+
+
+function TimedJobs(){
+	
+	console.log('> Start checking update..');
+	
+	wenku.getUpdateBookList(function(error, updatedBookList){
+
+		books.checkBookUpdate(updatedBookList, bookList, function(err){
+		
+			
+		
+		});
+	//res.send(updatedBookList);
+
+	});
+	
 }

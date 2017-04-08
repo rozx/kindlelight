@@ -432,8 +432,67 @@ function wenku() {
 
     this.__imageCallback = function (current ,total, callback) {
     }
+	
+	
+	this.getUpdateBookList = function(callback){
+		
+		// updatedBookList = [{id: '123132', title : 'bookTitle', wenkuUpdate: '2015-1-1'}]
+		
+		var updateUrl = self.url + '/modules/article/toplist.php?sort=lastupdate';
+		var updatedBookList = [];
+		
+		 rq({
+            url: updateUrl,
+            encoding: null,
+            jar: self.jar
+			
+        }, function (error, response, html) {
 
+            if (!error) {
+                var html_dec = gbk.toString('utf-8', html);
 
+                //console.log(html_dec);
+
+                //check if user is logged in
+				
+				var $ = cheerio.load(html_dec);
+				
+				console.log('Wenku > Checking book updates..');
+				//console.log($('div[style="margin-top:5px;"] p').eq(0).text());
+				
+				$('div[style="margin-top:5px;"]').each(function (i, e, a){
+					
+					
+				
+					var bookInfo = {};
+					bookInfo.id = $('b a', e).attr('href').replace('.htm','').replace(self.url + '/book/', '').replace('/', '');
+					
+					console.log("Wenku > Checking " + bookInfo.id + '/', i);
+					
+					bookInfo.title = $('b a', e).text();
+					bookInfo.wenkuUpdate = $('p', e).eq(1).text().split('/')[0].split(':')[1];
+					
+					console.log('Wenku > Last update: [' + bookInfo.title + '/' + bookInfo.wenkuUpdate + ']');
+					
+					updatedBookList.push(bookInfo);
+					
+				});
+
+				
+				if (callback) callback(null ,updatedBookList);
+				
+            } else {
+				
+				console.log('Wenku > checking updates error!', error);
+				
+				if (callback) callback(error , null);
+
+            }
+        });
+		
+		
+		
+	}
 
 
 }

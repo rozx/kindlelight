@@ -4,7 +4,10 @@ var rq = require('request');
 var gbk = require('gbk');
 
 var books = function () {
-
+	
+	
+	var updateCheckLimit = 3;
+	
 	var autoDownloadTxt = true;
 	var autoConvert = true;
     var self = this;
@@ -147,7 +150,7 @@ var books = function () {
 
     }
 
-    this.getBookInfo = function (bid, bookList,callback) {
+    this.getBookInfo = function (bid, bookList, forceUpdate, callback) {
 
         var bookInfo;
 
@@ -155,7 +158,7 @@ var books = function () {
 
             bookInfo = doc;
 
-            if (!bookInfo) {
+            if (!bookInfo || forceUpdate) {
 
                 rq({
                     url: wenku.url + '/book/' + bid + '.htm',
@@ -276,11 +279,6 @@ var books = function () {
 
             } else {
 
-             
-                // if bookInfo is already in data base!
-
-                callback(bookInfo);
-
                 // get images
 
                 if (!bookInfo.imagesChecked) {
@@ -312,6 +310,10 @@ var books = function () {
 				// check local files
 				
 				self.checkLocalFiles(bookInfo, bookList);
+				
+				// if bookInfo is already in data base!
+
+                if(callback) callback(bookInfo);
 
             }
 
@@ -320,6 +322,39 @@ var books = function () {
 
 
     }
+	
+	
+	this.checkBookUpdate = function (updatedBookList, bookList, callback){
+		
+		updatedBookList.forEach(function(e,i,array){
+			
+			if(i <= updateCheckLimit){
+			
+				self.getBookInfo(e.id, bookList, false, function(bi){
+					
+					if(bi.wenkuUpdate != e.wenkuUpdate){
+						
+						console.log('> book  [' + bi.title + '] has a update! Reimporting...');
+						
+						self.getBookInfo(e.id, bookList, true, callback);
+						
+						
+						
+					} else {
+						
+						console.log('> book [' + bi.title + '] does not has a update.');
+						
+						if(callback) callback();
+						
+					}
+					
+				});
+			}
+			
+		});
+		
+		
+	}
 	
 	this.checkLocalFiles = function (bookInfo, bookList){
 		

@@ -1,6 +1,3 @@
-#!/bin/bash
 # Starting kindle light service
-
 echo "Starting kindle light service..."
-
 sudo node --stack-size=65536 kindleLight.js 
