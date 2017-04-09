@@ -290,6 +290,10 @@ function downloader() {
 
 
         });
+		
+		// start downloader if there is tasks left
+		
+		if(queueList.length > 0 && queueList[0].status == READY) self.start();
 
     }
 

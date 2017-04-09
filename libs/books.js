@@ -387,11 +387,11 @@ var books = function () {
 									
 									// new chapter
 									
-									console.log('> Book id:' + e.id + ' has a new  Chapter ' + chapter.title);
+									console.log('> Book id:' + e.id + ' has a new  Chapter.');
 									
 									
 									rq({
-										url: wenku.url + '/modules/article/packshow.php?id=' + bookInfo.id + '&type=txt',
+										url: wenku.url + '/modules/article/packshow.php?id=' + bi.id + '&type=txt',
 										encoding: null,
 										jar: wenku.jar
 									}, function (err, respond2, html) {
@@ -404,7 +404,7 @@ var books = function () {
 											
 											// find out the latest chapter
 											bi.chapters.forEach(function (chapter, chapterIndex, chapters){
-									
+									 
 												if(chapterName.includes(chapter.title)){
 													
 													console.log('> Getting local content for new  Chapter ' + chapter.title);
