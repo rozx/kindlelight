@@ -470,7 +470,7 @@ var books = function () {
 			// save images to local
 			self.saveImages(cid, images, bookInfo, function (err,bookInfo) {
 				
-				if(cid != i) return false;
+				if(cid != chapterIndex) return false;
 
 				// update cover
 				if (!err) {
@@ -524,13 +524,13 @@ var books = function () {
 		var mobiDir = bookDir + bookInfo.id + '/mobi/' + bookInfo.chapters[cid].vid + '.mobi';
 		
 		// removing txt file
-		fs.rmdirSync(txtDir);
+		fs.removeSync(txtDir);
 		
 		// removing epub file
-		fs.rmdirSync(epubDir);
+		fs.removeSync(epubDir);
 		
 		// removing mobi file
-		fs.rmdirSync(epubDir);
+		fs.removeSync(epubDir);
 		
 		// update records
 		
