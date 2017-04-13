@@ -81,7 +81,6 @@ var books = function () {
     }
 
 
-
     this.getBookById = function (id, bookList, callback) {
 
 
@@ -371,10 +370,23 @@ var books = function () {
 										self.getChapterLocalContent(chapterIndex, bi, bookList);
 										
 										// update record
-										self.updateBookItem(bi.id, 'wenkuUpdate', e.wenkuUpdate , bookList);
-										self.updateBookItem(bi.id, 'lastUpdate', Date.now() , bookList);
-										self.updateBookItem(bi.id, 'lastLocalFileCheck', 0 , bookList);
-									
+										
+										
+										
+										//self.updateBookItem(bi.id, 'wenkuUpdate', e.wenkuUpdate , bookList);
+										//self.updateBookItem(bi.id, 'lastUpdate', Date.now() , bookList);
+										//self.updateBookItem(bi.id, 'lastLocalFileCheck', 0 , bookList);
+										
+										bi.wenkuUpdate = e.wenkuUpdate;
+										bi.lastUpdate = Date.now();
+										bi.lastLocalFileCheck = 0;
+										
+										
+										self.updateBookList(bi,bookList,function(){
+											
+											console.log('> Book ' + bi.title + 'record updated!' );
+											
+										});
 										
 									}
 								
@@ -415,11 +427,22 @@ var books = function () {
 													
 													
 													// update record
-													self.updateBookItem(bi.id, 'chapters', bi.chapters , bookList);
-													self.updateBookItem(bi.id, 'wenkuUpdate', e.wenkuUpdate , bookList);
-													self.updateBookItem(bi.id, 'lastUpdate', Date.now() , bookList);
-													self.updateBookItem(bi.id, 'lastLocalFileCheck', 0 , bookList);
+													//self.updateBookItem(bi.id, 'chapters', bi.chapters , bookList);
+													//self.updateBookItem(bi.id, 'wenkuUpdate', e.wenkuUpdate , bookList);
+													//self.updateBookItem(bi.id, 'lastUpdate', Date.now() , bookList);
+													//self.updateBookItem(bi.id, 'lastLocalFileCheck', 0 , bookList);
 													
+													
+													bi.wenkuUpdate = e.wenkuUpdate;
+													bi.lastUpdate = Date.now();
+													bi.lastLocalFileCheck = 0;
+													
+													
+													self.updateBookList(bi,bookList,function(){
+											
+														console.log('> Book ' + bi.title + 'record updated!' );
+											
+													});
 													
 												}
 											});
@@ -533,10 +556,19 @@ var books = function () {
 		fs.removeSync(epubDir);
 		
 		// update records
+		bookInfo.chapters[cid].localFiles.txt = false;
+		bookInfo.chapters[cid].localFiles.epub = false;
+		bookInfo.chapters[cid].localFiles.mobi = false;
 		
-		self.updateBookItem(bookInfo.id, 'chapters.' + cid + '.localFiles.txt', false, bookList);
-		self.updateBookItem(bookInfo.id, 'chapters.' + cid + '.localFiles.epub', false, bookList);
-		self.updateBookItem(bookInfo.id, 'chapters.' + cid + '.localFiles.mobi', false, bookList);
+		self.updateBookList(bookInfo,bookList,function(){
+											
+			console.log('> Book ' + bookInfo.title + 'record updated!' );
+											
+		});
+		
+		//self.updateBookItem(bookInfo.id, 'chapters.' + cid + '.localFiles.txt', false, bookList);
+		//self.updateBookItem(bookInfo.id, 'chapters.' + cid + '.localFiles.epub', false, bookList);
+		//self.updateBookItem(bookInfo.id, 'chapters.' + cid + '.localFiles.mobi', false, bookList);
 		
 	}
 	

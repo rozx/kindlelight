@@ -280,7 +280,7 @@ function downloader() {
 
             if (!err) {
 
-                console.log('Downloader > task file saved to local.');
+                //console.log('Downloader > task file saved to local.');
 
             } else {
 
