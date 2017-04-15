@@ -211,14 +211,20 @@ var converter = function() {
 							
 							if (fs.accessSync(coverPath, 'ws')){
 								
-								var coverPath = './' + vPath + '/image.jpg';
+								
 								//console.log('Converter > However, cover for chapter does not exist! Using default image!');
+								console.log('Converter > Local cover exists! Using it.');
+								
+							} else {
+								
+								var coverPath = '';
+								console.log('Converter > However, cover for chapter does not exist!');
 							}
 							
 						} else {
 							
 								var coverPath = './' + vPath + '/image.jpg';
-								console.log('Converter > However, cover for chapter does not exist! Using default image!');
+								console.log('Converter > However, cover for chapter does not exist locally! Using default image!');
 							
 						}
 
@@ -273,7 +279,23 @@ var converter = function() {
 
                                 if (element.startsWith('./')) {
 
-                                    data += '<img src= "file://' + pathF.resolve(__dirname + '/../', element) + '"><br>';
+									// local file check
+									
+									var imagePath = pathF.resolve(__dirname + '/../', element);
+									
+									if(fs.accessSync(imagePath, 'ws')){
+										
+										data += '<img src= "file://' + imagePath + '"><br>';
+										
+									} else {
+										
+										console.log("Converter > Image is not available right now. ");
+										
+									}
+								
+                                    //data += '<img src= "file://' + pathF.resolve(__dirname + '/../', element) + '"><br>';
+									
+									
                                 } else {
 
                                     data += '<img src="' + element + '"><br>';
