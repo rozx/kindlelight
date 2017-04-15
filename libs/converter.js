@@ -219,15 +219,22 @@ var converter = function() {
 								
 							} else {
 								
-								coverPath = null;
-								console.log('Converter > However, cover for chapter does not exist! Not using cover!');
+								//coverPath = null;
+								
+								var coverPath = '' + vPath + '/image.jpg';
+								
+								fs.ensureFileSync(coverPath);
+								
+								console.log('Converter > However, cover for chapter does not exist! Using default image!');
 							}
 							
 						} else {
 							
-								//var coverPath = './' + vPath + '/image.jpg';
+								var coverPath = '' + vPath + '/image.jpg';
 								
-								coverPath = null;
+								fs.ensureFileSync(coverPath);
+								
+								//coverPath = null;
 								console.log('Converter > However, cover for chapter does not exist locally! Using default image!');
 							
 						}
@@ -237,24 +244,26 @@ var converter = function() {
 
                         // else use the default cover image
 
-                        //coverPath = './' + vPath + '/image.jpg';
+                        coverPath = './' + vPath + '/image.jpg';
 						
-						coverPath = null;
+						fs.ensureFileSync(coverPath);
+						
+						//coverPath = null;
 						console.log('Converter > Cover for chapter does not exist, using default cover image!');
 
                     }
 					
 					
-                    var option = {
-                        title: taskList[0].bookInfo.title + ' ' + taskList[0].bookInfo.chapters[taskList[0].cid].title, // *Required, title of the book.
-                        author: taskList[0].bookInfo.author,
-                        publisher: taskList[0].bookInfo.publisher,
-                        cover: coverPath,
-                        appendChapterTitles: false,
-                        content: [],
-                        description: taskList[0].bookInfo.desc,
-                    };
-
+					var option = {
+						title: taskList[0].bookInfo.title + ' ' + taskList[0].bookInfo.chapters[taskList[0].cid].title, // *Required, title of the book.
+						author: taskList[0].bookInfo.author,
+						publisher: taskList[0].bookInfo.publisher,
+						cover: coverPath,
+						appendChapterTitles: false,
+						content: [],
+						description: taskList[0].bookInfo.desc,
+					};
+						
                     console.log('Converter > Finished init epub generate options.');
 
                     // add title page
