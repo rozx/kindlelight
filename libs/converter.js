@@ -197,7 +197,7 @@ var converter = function() {
 
                         // if there is a cover for chapter exist
 						
-						console.log('Converter > Cover for chapter exist!');
+						//console.log('Converter > Cover for chapter exist!');
 
 						
                         var coverPath = taskList[0].bookInfo.chapters[taskList[0].cid].images[0];
@@ -206,24 +206,28 @@ var converter = function() {
 						
 
                         if (coverPath.startsWith('./')) {
+
+							coverPath = pathF.resolve(__dirname + '/../', coverPath);
 							
-							coverPath = pathF.resolve(__dirname + '/../',coverPath);
+							console.log('Converter > Resolved Cover path is: ' + coverPath);
 							
-							if (fs.accessSync(coverPath, 'ws')){
+							if (!fs.accessSync(coverPath, fs.R_OK)){
 								
-								
+
 								//console.log('Converter > However, cover for chapter does not exist! Using default image!');
 								console.log('Converter > Local cover exists! Using it.');
 								
 							} else {
 								
-								var coverPath = '';
-								console.log('Converter > However, cover for chapter does not exist!');
+								coverPath = null;
+								console.log('Converter > However, cover for chapter does not exist! Not using cover!');
 							}
 							
 						} else {
 							
-								var coverPath = './' + vPath + '/image.jpg';
+								//var coverPath = './' + vPath + '/image.jpg';
+								
+								coverPath = null;
 								console.log('Converter > However, cover for chapter does not exist locally! Using default image!');
 							
 						}
@@ -233,7 +237,9 @@ var converter = function() {
 
                         // else use the default cover image
 
-                        var coverPath = './' + vPath + '/image.jpg';
+                        //coverPath = './' + vPath + '/image.jpg';
+						
+						coverPath = null;
 						console.log('Converter > Cover for chapter does not exist, using default cover image!');
 
                     }
@@ -280,10 +286,10 @@ var converter = function() {
                                 if (element.startsWith('./')) {
 
 									// local file check
-									
+
 									var imagePath = pathF.resolve(__dirname + '/../', element);
 									
-									if(fs.accessSync(imagePath, 'ws')){
+									if(!fs.accessSync(imagePath, fs.R_OK )){
 										
 										data += '<img src= "file://' + imagePath + '"><br>';
 										

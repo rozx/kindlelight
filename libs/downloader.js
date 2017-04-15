@@ -19,7 +19,7 @@ function downloader() {
     var queueList = [];
     var taskFilePath = './data/tasks/downloader.task';
     const READY = 0, RUNNING = 1; 
-    var maxThreads = 20;
+    var maxThreads = 40;
 
 
 
