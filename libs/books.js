@@ -101,14 +101,16 @@ var books = function () {
 
 
     this.getCover = function (bookInfo, callback) {
-
-        fs.readFile(bookDir + bookInfo.id + '/' + 'image.jpg', function (err, data) {
-
-            if (err) {
-
-                // file doesn't exist
-
-                downloader.queue({
+		
+		
+		fs.stat(bookDir + bookInfo.id + '/' + 'image.jpg', function(err,stats){
+			
+			
+			if(err || !stats || stats["size"] == 0){
+				
+				// file doesn't exist
+				
+				    downloader.queue({
                     url: bookInfo.image,
                     dir: bookDir + bookInfo.id + '/' + 'image.jpg',
                     encoding: 'binary',
@@ -134,18 +136,24 @@ var books = function () {
 
                     }
                 });
+				
+			} else {
+				
+				
+				// file exists
+					
+				fs.readFile(bookDir + bookInfo.id + '/' + 'image.jpg', function (err, data) {
 
+					// no error to open the file
 
-            } else {
+					if (!err && callback) callback(null,data);
 
-                // file exists
-
-                if (callback) callback(null,data);
-
-            }
-
-        });
-
+					});
+					
+				}
+			
+			
+		});
 
     }
 
