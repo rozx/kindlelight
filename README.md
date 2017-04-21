@@ -1,6 +1,11 @@
 #kindlelight
 a light novel site for kindle.
+It will automatically download files from online and convert it to .mobi file.
+
 source: wenku8.
+language: Chinese
+
+基本上就是个人用的轻小说kindle转换器 (-. -)
 
 Important: increase stack size by using 'node --stack-size=val' to prevent the RangeError
 
