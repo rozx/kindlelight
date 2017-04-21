@@ -1,4 +1,4 @@
-#kindlelight
+##kindlelight
 +a light novel site for kindle.
 +It will automatically download files from online and convert it to .mobi file.
 
