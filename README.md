@@ -9,9 +9,12 @@
 + 在远程写中文太麻烦了，于是就用的英文.
 
 
-Important: increase stack size by using 'node --stack-size=val' to prevent the RangeError
+Important: 
++ increase stack size by using 'node --stack-size=val' to prevent the RangeError
++ Create a user loging file under data/user/wenku.user before starting
++ Required zip to package the epub file.
 
-CMD: sudo pm2 start kindleLight.js --node-args="--stack-size=65536"
++ CMD: sudo pm2 start kindleLight.js --node-args="--stack-size=65536"
 
 ## V0.3
 + Added loacl file check
