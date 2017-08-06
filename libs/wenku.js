@@ -7,523 +7,524 @@ var urlp = require('url');
 
 function wenku() {
 
-	//init vars
-	this.module = 'wenku';
-	this.url = 'http://www.wenku8.com';
-	this.username = undefined;
-	this.password = undefined;
-	this.loggedIn = false;
-	this.lastLogin = undefined;
-	this.cookies = undefined;
-	this.jar = rq.jar();
-	this.cookiePath = './data/cookies/wenku.cookie';
-	this.userPath = './data/user/wenku.user';
-	this.localCookie = undefined;
-	this.bookInfo = undefined;
-	var self = this;
+    //init vars
+    this.module = 'wenku';
+    this.url = 'http://www.wenku8.com';
+    this.username = undefined;
+    this.password = undefined;
+    this.loggedIn = false;
+    this.lastLogin = undefined;
+    this.cookies = undefined;
+    this.jar = rq.jar();
+    this.cookiePath = './data/cookies/wenku.cookie';
+    this.userPath = './data/user/wenku.user';
+    this.localCookie = undefined;
+    this.bookInfo = undefined;
+    var self = this;
 
-	//functions
+    //functions
 
-	this.init = function (callback) {
+    this.init = function(callback) {
 
-		// check if local cookies is available.
+        // check if local cookies is available.
 
-		var localJar = rq.jar();
+        var localJar = rq.jar();
 
-		fs.access(self.cookiePath, fs.R_OK | fs.W_OK, (err) => {
+        fs.access(self.cookiePath, fs.R_OK | fs.W_OK, (err) => {
 
-			// check whether the local cookies is available.
+            // check whether the local cookies is available.
 
-			if (err) {
-				console.log('Wenku > local cookies is not available!');
-				self.localCookie = false;
+            if (err) {
+                console.log('Wenku > local cookies is not available!');
+                self.localCookie = false;
 
-				self.login();
+                self.login();
 
-			} else {
-				console.log('Wenku > Found local cookies!');
+            } else {
+                console.log('Wenku > Found local cookies!');
 
-				fs.readFile(self.cookiePath, 'utf-8', (err, data) => {
+                fs.readFile(self.cookiePath, 'utf-8', (err, data) => {
 
-					if (err) {
+                    if (err) {
 
-						console.log('Wenku > File read error, online logging..');
+                        console.log('Wenku > File read error, online logging..');
 
-						self.localCookie = false;
+                        self.localCookie = false;
 
-						self.login();
+                        self.login();
 
-					} else {
+                    } else {
 
-						//console.log(data);
+                        //console.log(data);
 
-						console.log('Wenku > Read data.');
+                        console.log('Wenku > Read data.');
 
-						var cookie = rq.cookie(data);
-						var url = self.url;
-						localJar.setCookie(cookie, url);
+                        var cookie = rq.cookie(data);
+                        var url = self.url;
+                        localJar.setCookie(cookie, url);
 
-						// localJar = rq.jar(new FileCookieStore(self.cookiePath));
+                        // localJar = rq.jar(new FileCookieStore(self.cookiePath));
 
-						console.log('Wenku > Logging with local cookies.');
+                        console.log('Wenku > Logging with local cookies.');
 
-						self.jar = localJar;
-						self.localCookie = true;
+                        self.jar = localJar;
+                        self.localCookie = true;
 
-						// test connection
-						self.checkLogin(true);
-					}
-				});
+                        // test connection
+                        self.checkLogin(true);
+                    }
+                });
 
-			}
-		});
+            }
+        });
 
-	};
+    };
 
-	this.login = function () {
+    this.login = function() {
 
-		console.log('Wenku > Logging in...');
+        console.log('Wenku > Logging in...');
 
-		// first check local file for username and password
+        // first check local file for username and password
 
-		// ensure dir
-		fs.ensureFileSync(self.userPath);
+        // ensure dir
+        fs.ensureFileSync(self.userPath);
 
-		// read file as json
+        // read file as json
 
-		console.log('Wenku > Reading local user profile..');
+        console.log('Wenku > Reading local user profile..');
 
-		const userProfile = fs.readJsonSync(self.userPath, {
-				throws: false
-			})
-			
+        const userProfile = fs.readJsonSync(self.userPath, {
+            throws: false
+        })
 
-			if (!userProfile) {
 
-				console.log('Wenku > Local user file not found.');
+        if (!userProfile) {
 
-				self.username = '';
-				self.password = '';
-				//self.loggedIn = false;
+            console.log('Wenku > Local user file not found.');
 
+            self.username = '';
+            self.password = '';
+            //self.loggedIn = false;
 
-			} else {
 
-				console.log('Wenku > Local user file found.');
+        } else {
 
-				self.username = userProfile.username;
-				self.password = userProfile.password;
+            console.log('Wenku > Local user file found.');
 
-			}
+            self.username = userProfile.username;
+            self.password = userProfile.password;
 
-			var postData = {
+        }
 
-			username: self.username,
-			password: self.password,
-			usecookie: '315360000',
-			action: 'login'
-		};
+        var postData = {
 
-		rq.post({
-			url: self.url + '/login.php?do=submit',
-			qs: postData,
-			encoding: null,
-			jar: self.jar
-		}, function (err, res, body) {
+            username: self.username,
+            password: self.password,
+            usecookie: '315360000',
+            action: 'login'
+        };
 
-			console.log('> Code:', res.statusCode);
+        rq.post({
+            url: self.url + '/login.php?do=submit',
+            qs: postData,
+            encoding: null,
+            jar: self.jar
+        }, function(err, res, body) {
 
-			//console.log(body);
+            console.log('> Code:', res.statusCode);
 
-			if (res.statusCode == 200) {
+            //console.log(body);
 
-				// if loggined in
+            if (res.statusCode == 200) {
 
-				//console.log(gbk.toString('utf-8',body));
+                // if loggined in
 
+                //console.log(gbk.toString('utf-8',body));
 
-				console.log('Wenku > Logging... ');
-				self.cookies = self.jar.getCookieString(self.url);
 
-				console.log('Wenku > Cookies:', self.cookies);
+                console.log('Wenku > Logging... ');
+                self.cookies = self.jar.getCookieString(self.url);
 
-				// set var
-				self.loggedIn = true;
-				//self.username = user;
-				//self.password = pwd;
+                console.log('Wenku > Cookies:', self.cookies);
 
+                // set var
+                self.loggedIn = true;
+                //self.username = user;
+                //self.password = pwd;
 
-				// store local cookies
-				console.log('Wenku > Saving cookies to local..');
 
-				fs.writeFile(self.cookiePath, self.cookies, (err) => {
+                // store local cookies
+                console.log('Wenku > Saving cookies to local..');
 
-					if (err)
-						console.log(err);
+                fs.writeFile(self.cookiePath, self.cookies, (err) => {
 
-					console.log('Wenku > Local cookies saved.');
+                    if (err)
+                        console.log(err);
 
-				});
+                    console.log('Wenku > Local cookies saved.');
 
-			} else {
-				// login failed
+                });
 
-				self.loggedIn = false;
-				console.log('Wenku > Logging failed.');
+            } else {
+                // login failed
 
-			}
+                self.loggedIn = false;
+                console.log('Wenku > Logging failed.');
 
-		});
+            }
 
-		return self.loggedIn;
-	};
+        });
 
-	this.checkLogin = function (autoLoggin) {
+        return self.loggedIn;
+    };
 
-		var keyword = 'logout';
+    this.checkLogin = function(autoLoggin) {
 
-		rq({
-			url: self.url + '/index.php',
-			encoding: null,
-			jar: self.jar
-		}, function (error, response, html) {
+        var keyword = 'logout';
 
-			if (!error) {
-				var html_dec = gbk.toString('utf-8', html);
+        rq({
+            url: self.url + '/index.php',
+            encoding: null,
+            jar: self.jar
+        }, function(error, response, html) {
 
-				//console.log(html_dec);
+            if (!error) {
+                var html_dec = gbk.toString('utf-8', html);
 
-				//check if user is logged in
+                //console.log(html_dec);
 
-				if (html_dec.indexOf(keyword) > -1) {
+                //check if user is logged in
 
-					self.loggedIn = true;
-					console.log('Wenku > User has logged in.');
-				} else {
-					self.loggedIn = false;
-					console.log('Wenku > User has not logged in');
+                if (html_dec.indexOf(keyword) > -1) {
 
-					if (autoLoggin)
-						self.login();
-				}
+                    self.loggedIn = true;
+                    console.log('Wenku > User has logged in.');
+                } else {
+                    self.loggedIn = false;
+                    console.log('Wenku > User has not logged in');
 
-			} else {}
-		});
+                    if (autoLoggin)
+                        self.login();
+                }
 
-	};
+            } else {}
+        });
 
-	this.getBookInfo = function (html, bid) {
+    };
 
-		// bookInfo = {_id: '1', title: 'God World', id : '1922', image : 'xxx',author: 'xxx', status : '连载中 | 已完成', wenkuUpdate:'2015-1-1', hotIndex: 0 ,desc: 'xxxxxx',publisher: 'xxx',lastUpdate : 1231232131, listUrl : 'http://www.wenku8.com/novel/0/1922/index.htm'
-		//              chapters: [{ title : '1', localFiles : {txt : false, epub: false, mobi: false } ,lastConvert: 5454334 ,images: ['aaaa.jpg'],url: 'http://dl.wenku8.com/packtxt.php?aid=1922&vid=67426&charset=utf-8' }]}
+    this.getBookInfo = function(html, bid) {
 
-		var bookInfo = {};
-		var url = self.url + '/book/' + bid + '.htm';
+        // bookInfo = {_id: '1', title: 'God World', id : '1922', image : 'xxx',author: 'xxx', status : '连载中 | 已完成', wenkuUpdate:'2015-1-1', hotIndex: 0 ,desc: 'xxxxxx',publisher: 'xxx',lastUpdate : 1231232131, listUrl : 'http://www.wenku8.com/novel/0/1922/index.htm'
+        //              chapters: [{ title : '1', localFiles : {txt : false, epub: false, mobi: false } ,lastConvert: 5454334 ,images: ['aaaa.jpg'],url: 'http://dl.wenku8.com/packtxt.php?aid=1922&vid=67426&charset=utf-8' }]}
 
-		// load cheerio
-		var $ = cheerio.load(html);
+        var bookInfo = {};
+        var url = self.url + '/book/' + bid + '.htm';
 
-		//bookInfo.title = $('.grid caption a').text();
-		//bookInfo.id = $('.grid caption a').attr('href').replace('http://www.wenku8.com/book/', '').replace('.htm', '');
-		bookInfo.id = bid;
-		//bookInfo.image = 'http://img.wkcdn.com/image/1/' + bookInfo.id + '/' + bookInfo.id + 's.jpg';
+        // load cheerio
+        var $ = cheerio.load(html);
 
-		bookInfo.listUrl = $('div[style="text-align:center"] a').eq(0).attr('href');
-		bookInfo.image = $('div table tr td img').attr('src');
-		bookInfo.title = $('div table tr td table tr td span b').text();
-		bookInfo.author = $('div table tr td').eq(4).text().split('：')[1];
-		bookInfo.status = $('div table tr td').eq(5).text().split('：')[1];
-		bookInfo.hotIndex = 0;
-		bookInfo.wenkuUpdate = $('div table tr td').eq(6).text().split('：')[1];
-		bookInfo.publisher = $('div table tr td').eq(3).text().split('：')[1];
-		bookInfo.desc = $('div table tr td span').eq(4).text();
-		bookInfo.imagesChecked = false;
-		bookInfo.lastUpdate = Date.now();
-		bookInfo.lastLocalFileCheck = 0;
+        //bookInfo.title = $('.grid caption a').text();
+        //bookInfo.id = $('.grid caption a').attr('href').replace('http://www.wenku8.com/book/', '').replace('.htm', '');
+        bookInfo.id = bid;
+        //bookInfo.image = 'http://img.wkcdn.com/image/1/' + bookInfo.id + '/' + bookInfo.id + 's.jpg';
 
-		return bookInfo;
-	}
+        bookInfo.listUrl = $('div[style="text-align:center"] a').eq(0).attr('href');
+        bookInfo.image = $('div table tr td img').attr('src');
+        bookInfo.title = $('div table tr td table tr td span b').text();
+        bookInfo.author = $('div table tr td').eq(4).text().split('：')[1];
+        bookInfo.status = $('div table tr td').eq(5).text().split('：')[1];
+        bookInfo.hotIndex = 0;
+        bookInfo.wenkuUpdate = $('div table tr td').eq(6).text().split('：')[1];
+        bookInfo.publisher = $('div table tr td').eq(3).text().split('：')[1];
+        //bookInfo.desc = $('div table tr td span').eq(4).text();
+        bookInfo.desc = $('span[style="font-size:14px;"]').eq(1).text();
+        bookInfo.imagesChecked = false;
+        bookInfo.lastUpdate = Date.now();
+        bookInfo.lastLocalFileCheck = 0;
 
-	this.getChapterInfo = function (bookInfo, html) {
+        return bookInfo;
+    }
 
-		// Sync function
+    this.getChapterInfo = function(bookInfo, html) {
 
-		bookInfo.chapters = [];
+        // Sync function
 
-		if (bookInfo.id != '') {
+        bookInfo.chapters = [];
 
-			var $ = cheerio.load(html);
+        if (bookInfo.id != '') {
 
-			$('table tr').nextAll().each(function (i, elem) {
+            var $ = cheerio.load(html);
 
-				// for every chapters
+            $('table tr').nextAll().each(function(i, elem) {
 
-				title = $('.odd', elem).text();
-				ulink = $('.even a', elem).eq(1).attr('href');
-				vid = urlp.parse(ulink, true).query.vid;
+                // for every chapters
 
-				bookInfo.chapters.push({
+                title = $('.odd', elem).text();
+                ulink = $('.even a', elem).eq(1).attr('href');
+                vid = urlp.parse(ulink, true).query.vid;
 
-					id: i,
-					vid: vid,
-					title: title,
-					url: ulink,
-					lastConvert: 0,
-					localFiles: {
-						txt: false,
-						epub: false,
-						mobi: false
-					},
-					images: []
+                bookInfo.chapters.push({
 
-				});
+                    id: i,
+                    vid: vid,
+                    title: title,
+                    url: ulink,
+                    lastConvert: 0,
+                    localFiles: {
+                        txt: false,
+                        epub: false,
+                        mobi: false
+                    },
+                    images: []
 
-			});
+                });
 
-			//console.log(bookInfo);
+            });
 
-		}
+            //console.log(bookInfo);
 
-		return bookInfo;
+        }
 
-	}
+        return bookInfo;
 
-	this.getImages = function (bookInfo, callback) {
+    }
 
-		if (bookInfo && bookInfo.listUrl && !bookInfo.imagesChecked) {
+    this.getImages = function(bookInfo, callback) {
 
-			// if there is url exists
+        if (bookInfo && bookInfo.listUrl && !bookInfo.imagesChecked) {
 
-			rq({
-				url: bookInfo.listUrl,
-				encoding: null,
-				jar: self.jar
-			}, function (error, response, html) {
+            // if there is url exists
 
-				if (!error) {
-					// got html successful
+            rq({
+                url: bookInfo.listUrl,
+                encoding: null,
+                jar: self.jar
+            }, function(error, response, html) {
 
-					console.log('Wenku > Checking images for book:', bookInfo.title);
+                if (!error) {
+                    // got html successful
 
-					var html_dec = gbk.toString('utf-8', html);
+                    console.log('Wenku > Checking images for book:', bookInfo.title);
 
-					var $ = cheerio.load(html_dec);
+                    var html_dec = gbk.toString('utf-8', html);
 
-					var chapterId = -1;
+                    var $ = cheerio.load(html_dec);
 
-					$('table tr td').each(function (i, e, array) {
+                    var chapterId = -1;
 
-						//console.log($('a', e).text());
+                    $('table tr td').each(function(i, e, array) {
 
-						if ($(e).attr('class') == 'vcss') {
-							chapterId++;
-						} else if ($('a', e).text().includes('插图')) {
+                        //console.log($('a', e).text());
 
-							var iUrl = urlp.resolve(bookInfo.listUrl, $('a', e).attr('href'));
+                        if ($(e).attr('class') == 'vcss') {
+                            chapterId++;
+                        } else if ($('a', e).text().includes('插图')) {
 
-							//console.log('Wenku > Found images at chapters: ', chapterId + 1);
+                            var iUrl = urlp.resolve(bookInfo.listUrl, $('a', e).attr('href'));
 
-							self.getImage(chapterId, bookInfo, iUrl, function (err, cid, bookInfo, images) {
+                            //console.log('Wenku > Found images at chapters: ', chapterId + 1);
 
-								if (!err) {
+                            self.getImage(chapterId, bookInfo, iUrl, function(err, cid, bookInfo, images) {
 
-									console.log('Wenku > Got Images for book:', bookInfo.title, 'chapter:', cid);
+                                if (!err) {
 
-									//callback
-									if (callback) {
+                                    console.log('Wenku > Got Images for book:', bookInfo.title, 'chapter:', cid);
 
-										// set image checked.
+                                    //callback
+                                    if (callback) {
 
-										bookInfo.imagesChecked = true;
+                                        // set image checked.
 
-										// callback
+                                        bookInfo.imagesChecked = true;
 
-										callback(null, cid, bookInfo, images)
+                                        // callback
 
-									};
+                                        callback(null, cid, bookInfo, images)
 
-								}
+                                    };
 
-							});
+                                }
 
-						}
+                            });
 
-					});
+                        }
 
-				} else {
+                    });
 
-					// not able to get html
+                } else {
 
-					if (callback)
-						callback(error);
+                    // not able to get html
 
-				}
+                    if (callback)
+                        callback(error);
 
-			});
-		} else {
+                }
 
-			if (callback)
-				callback(new Error('Url not exists'), null);
+            });
+        } else {
 
-		}
-	}
+            if (callback)
+                callback(new Error('Url not exists'), null);
 
-	this.getImage = function (cid, bookInfo, url, callback) {
+        }
+    }
 
-		if (bookInfo && bookInfo.chapters[cid]) {
+    this.getImage = function(cid, bookInfo, url, callback) {
 
-			// if images are not already exists
+        if (bookInfo && bookInfo.chapters[cid]) {
 
-			if (!bookInfo.chapters[cid].cover) {
+            // if images are not already exists
 
-				rq({
-					url: url,
-					encoding: null,
-					jar: self.jar
-				}, function (error, response, html) {
+            if (!bookInfo.chapters[cid].cover) {
 
-					if (!error) {
+                rq({
+                    url: url,
+                    encoding: null,
+                    jar: self.jar
+                }, function(error, response, html) {
 
-						// no error getting images url
+                    if (!error) {
 
-						html = gbk.toString('utf-8', html);
+                        // no error getting images url
 
-						var $ = cheerio.load(html);
+                        html = gbk.toString('utf-8', html);
 
-						// getting image url
+                        var $ = cheerio.load(html);
 
-						var images = [];
+                        // getting image url
 
-						// add cover for each chapter
-						//var cover = $('.divimage img').attr('src');
+                        var images = [];
 
-						$('.divimage img').each(function (i, e) {
+                        // add cover for each chapter
+                        //var cover = $('.divimage img').attr('src');
 
-							// add each image to array
-							//console.log($(e).attr('src'));
-							images.push($(e).attr('src'));
+                        $('.divimage img').each(function(i, e) {
 
-						});
+                            // add each image to array
+                            //console.log($(e).attr('src'));
+                            images.push($(e).attr('src'));
 
-						// add images and cover to bookInfo
+                        });
 
-						//bookInfo.chapters[cid].cover = cover;
-						bookInfo.chapters[cid].images = images;
+                        // add images and cover to bookInfo
 
-						if (callback)
-							callback(null, cid, bookInfo, images);
+                        //bookInfo.chapters[cid].cover = cover;
+                        bookInfo.chapters[cid].images = images;
 
-					} else {
+                        if (callback)
+                            callback(null, cid, bookInfo, images);
 
-						if (callback)
-							callback(error);
-					}
+                    } else {
 
-				});
+                        if (callback)
+                            callback(error);
+                    }
 
-			} else {
+                });
 
-				// images are already exists
-				callback(new Error('Images already exists'));
+            } else {
 
-			}
-		} else {
+                // images are already exists
+                callback(new Error('Images already exists'));
 
-			callback(new Error('Invalid cid or bookInfo'));
-		}
+            }
+        } else {
 
-	}
+            callback(new Error('Invalid cid or bookInfo'));
+        }
 
-	this.__imageCallback = function (current, total, callback) {}
+    }
 
-	this.getUpdateBookList = function (callback) {
+    this.__imageCallback = function(current, total, callback) {}
 
-		// updatedBookList = [{id: '123132', title : 'bookTitle', wenkuUpdate: '2015-1-1'}]
+    this.getUpdateBookList = function(callback) {
 
-		var updateUrl = self.url + '/modules/article/toplist.php?sort=lastupdate';
-		var updatedBookList = [];
+        // updatedBookList = [{id: '123132', title : 'bookTitle', wenkuUpdate: '2015-1-1'}]
 
-		rq({
-			url: updateUrl,
-			encoding: null,
-			jar: self.jar
+        var updateUrl = self.url + '/modules/article/toplist.php?sort=lastupdate';
+        var updatedBookList = [];
 
-		}, function (error, response, html) {
+        rq({
+            url: updateUrl,
+            encoding: null,
+            jar: self.jar
 
-			if (!error) {
-				var html_dec = gbk.toString('utf-8', html);
+        }, function(error, response, html) {
 
-				//console.log(html_dec);
+            if (!error) {
+                var html_dec = gbk.toString('utf-8', html);
 
-				//check if user is logged in
+                //console.log(html_dec);
 
-				var $ = cheerio.load(html_dec);
+                //check if user is logged in
 
-				console.log('Wenku > Checking book updates..');
-				//console.log($('div[style="margin-top:5px;"] p').eq(0).text());
+                var $ = cheerio.load(html_dec);
 
-				$('div[style="margin-top:5px;"]').each(function (i, e, a) {
+                console.log('Wenku > Checking book updates..');
+                //console.log($('div[style="margin-top:5px;"] p').eq(0).text());
 
-					var bookInfo = {};
-					bookInfo.id = $('b a', e).attr('href').replace('.htm', '').replace(self.url + '/book/', '').replace('/', '');
-					bookInfo.title = $('b a', e).text();
-					bookInfo.wenkuUpdate = $('p', e).eq(1).text().split('/')[0].split(':')[1];
+                $('div[style="margin-top:5px;"]').each(function(i, e, a) {
 
-					//console.log("Wenku > Checking " + bookInfo.id + '/', i);
+                    var bookInfo = {};
+                    bookInfo.id = $('b a', e).attr('href').replace('.htm', '').replace(self.url + '/book/', '').replace('/', '');
+                    bookInfo.title = $('b a', e).text();
+                    bookInfo.wenkuUpdate = $('p', e).eq(1).text().split('/')[0].split(':')[1];
 
+                    //console.log("Wenku > Checking " + bookInfo.id + '/', i);
 
-					console.log('Wenku > Last update: [' + bookInfo.title + '/' + bookInfo.wenkuUpdate + ']');
 
-					updatedBookList.push(bookInfo);
+                    console.log('Wenku > Last update: [' + bookInfo.title + '/' + bookInfo.wenkuUpdate + ']');
 
-				});
+                    updatedBookList.push(bookInfo);
 
-				if (callback)
-					callback(null, updatedBookList);
+                });
 
-			} else {
+                if (callback)
+                    callback(null, updatedBookList);
 
-				console.log('Wenku > checking updates error!', error);
+            } else {
 
-				if (callback)
-					callback(error, null);
+                console.log('Wenku > checking updates error!', error);
 
-			}
-		});
+                if (callback)
+                    callback(error, null);
 
-	}
+            }
+        });
 
-	this.getLastestChapter = function (bid, callback) {
+    }
 
-		var updateUrl = self.url + '/book/' + bid + '.htm';
-		var chapterName = '';
+    this.getLastestChapter = function(bid, callback) {
 
-		rq({
-			url: updateUrl,
-			encoding: null,
-			jar: self.jar
+        var updateUrl = self.url + '/book/' + bid + '.htm';
+        var chapterName = '';
 
-		}, function (error, response, html) {
+        rq({
+            url: updateUrl,
+            encoding: null,
+            jar: self.jar
 
-			if (!error) {
+        }, function(error, response, html) {
 
-				var html_dec = gbk.toString('utf-8', html);
-				var $ = cheerio.load(html_dec);
+            if (!error) {
 
-				console.log('Wenku > Checking update chapter for book id:' + bid);
+                var html_dec = gbk.toString('utf-8', html);
+                var $ = cheerio.load(html_dec);
 
-				chapterName = $('span[style="font-size:14px;"] a').text();
+                console.log('Wenku > Checking update chapter for book id:' + bid);
 
-				callback(chapterName);
+                chapterName = $('span[style="font-size:14px;"] a').text();
 
-			} else {
+                callback(chapterName);
 
-				if (callback)
-					callback(null);
-			}
+            } else {
 
-		});
-	}
+                if (callback)
+                    callback(null);
+            }
+
+        });
+    }
 
 }
 
